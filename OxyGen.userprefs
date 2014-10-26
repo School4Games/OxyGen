@@ -1,12 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Enemy.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\WorldMap.cs">
     <Files>
-      <File FileName="Assets\Scripts\WorldMap.cs" Line="17" Column="31" />
-      <File FileName="Assets\Scripts\Editor\WorldMapEditor.cs" Line="12" Column="8" />
-      <File FileName="Assets\Scripts\ExtMonoBehaviour.cs" Line="7" Column="1" />
-      <File FileName="Assets\Scripts\Enemy.cs" Line="7" Column="15" />
-      <File FileName="Assets\Scripts\EventManager.cs" Line="6" Column="30" />
+      <File FileName="Assets\Scripts\WorldMap.cs" Line="97" Column="46" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

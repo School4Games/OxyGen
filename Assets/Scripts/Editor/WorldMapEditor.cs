@@ -7,6 +7,7 @@ public class WorldMapEditor : Editor
 {
 	public override void OnInspectorGUI()
 	{	
+		DrawDefaultInspector();
 		WorldMap map = (WorldMap)target;
 		if (GUILayout.Button("Generate")) {
 			map.generate();
