@@ -84,17 +84,31 @@ public class WorldMap : MonoBehaviour {
 				triangles[3] = 1;
 				triangles[4] = 2;
 				triangles[5] = 3;*/
-				vertices[x*4+y*width] = new Vector3(x, y, Random.value);
-				vertices[x*4+1+y*width] = new Vector3((x+1), y, Random.value);
-				vertices[x*4+2+y*width] = new Vector3(x, (y+1), Random.value);
-				vertices[x*4+3+y*width] = new Vector3((x+1), (y+1), Random.value);
+				//vertices confirmed to work
+				vertices[x*4+y*width*4] = new Vector3(x, y, 0);
+				vertices[x*4+1+y*width*4] = new Vector3((x+1), y, 0);
+				vertices[x*4+2+y*width*4] = new Vector3(x, (y+1), 0);
+				vertices[x*4+3+y*width*4] = new Vector3((x+1), (y+1), 0);
 
-				triangles[x*6+y*width] = x*4+y*width;
-				triangles[x*6+1+y*width] = x*4+2+y*width;
-				triangles[x*6+2+y*width] = x*4+1+y*width;
-				triangles[x*6+3+y*width] = x*4+1+y*width;
-				triangles[x*6+4+y*width] = x*4+2+y*width;
-				triangles[x*6+5+y*width] = x*4+3+y*width;
+				if ((x*4+y*width*4) > 755) {
+				log += (x*4+y*width*4) + ":" + new Vector3(x, y, 0) + ", "
+					+ (x*4+1+y*width*4) + ":" + new Vector3((x+1), y, 0) + ", "
+					+ (x*4+2+y*width*4) + ":" + new Vector3(x, (y+1), 0) + ", "
+					+ (x*4+3+y*width*4) + ":" + new Vector3((x+1), (y+1), 0) + ", "
+					+ "\n";
+				}
+
+				triangles[x*6+y*width*6] = x*4+y*width;
+				triangles[x*6+1+y*width*6] = x*4+2+y*width;
+				triangles[x*6+2+y*width*6] = x*4+1+y*width;
+				triangles[x*6+3+y*width*6] = x*4+1+y*width;
+				triangles[x*6+4+y*width*6] = x*4+2+y*width;
+				triangles[x*6+5+y*width*6] = x*4+3+y*width;
+
+				uv[x*4+y*width] = new Vector2(0, 0);
+				uv[x*4+1+y*width] = new Vector2(1, 0);
+				uv[x*4+2+y*width] = new Vector2(0, 1);
+				uv[x*4+3+y*width] = new Vector2(1, 1);
 			}
 		}
 
