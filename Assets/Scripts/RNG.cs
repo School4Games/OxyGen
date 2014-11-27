@@ -9,7 +9,7 @@ public class RNG
 		int result = 0;
 		for (int i=0; i<dice; i++) 
 		{
-			result += Mathf.RoundToInt(Random.value * (float)sides);
+			result += Random.Range(1, sides+1);
 		}
 		return result;
 	}

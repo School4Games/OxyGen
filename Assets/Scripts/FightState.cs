@@ -10,15 +10,24 @@ public class FightState : MonoBehaviour
 
 	int shield = 0;
 
-	int dmg = -1;
+	public int dmg = -1;
 
 	// "lootboost"
 	// how do we call this?
 	int pot = 0;
 
 	// dmg pointer
-	int dmgX = 0;
-	int dmgY = 0;
+	public int dmgX = 0;
+	public int dmgY = 0;
+	// not actually time per cycle anymore
+	public float maxTimePerCycle = 5;
+	public int cycles = 2;
+
+	bool rolling = false;
+
+	// test
+	public int enemyDice = 3;
+	public int enemySides = 5;
 
 	int roundsSurvived = 0;
 
@@ -34,17 +43,15 @@ public class FightState : MonoBehaviour
 		// test
 		// get actual player here instead of creating new one
 		player = new Player ();
-		enemy = new Enemy ();
-		enemy.dice = 3;
-		enemy.sides = 5;
-		string log = "";
+		//string log = "";
+		spawnEnemy ();
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
 		{
 			log += eventCount + ", ";
 		}*/
-		Debug.Log(RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides));
-		Debug.Log(log);
+		//Debug.Log(RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides));
+		//Debug.Log(log);
 	}
 	
 	// Update is called once per frame
@@ -66,14 +73,16 @@ public class FightState : MonoBehaviour
 		GUI.Label (new Rect(140, 40, 120, 20), "Bet: " + pot);
 		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(player.water - shield, maxDmg - shield)));
 
-		if (GUI.Button (new Rect(400, 10, 120, 50), "Hit me!"))
-		{
-			// reset pointer
-			dmgX = 0;
-			dmgY = 0;
-			StartCoroutine ("roll");
-			if (player.health > 0) {
-				roundsSurvived++;
+		if (!rolling) {
+			if (GUI.Button (new Rect(400, 10, 120, 50), "Hit me!"))
+			{
+				// reset pointer
+				dmgX = 0;
+				dmgY = 0;
+				StartCoroutine ("roll");
+				if (player.health > 0) {
+					roundsSurvived++;
+				}
 			}
 		}
 
@@ -108,8 +117,25 @@ public class FightState : MonoBehaviour
 		}
 	}
 
+	void spawnEnemy () 
+	{
+		// reset pointer
+		dmgX = 0;
+		dmgY = 0;
+		
+		enemy = new Enemy ();
+		enemy.dice = enemyDice;
+		enemy.sides = enemySides;
+
+		// randomize values for next enemy
+		// take into account round?
+		enemyDice = Random.Range (1, 4);
+		enemySides = Random.Range (2, 6);
+	}
+
 	IEnumerator roll () 
 	{
+		rolling = true;
 		int maxDmg = enemy.dice * enemy.sides;
 		// do roll
 		dmg = enemy.attack ();
@@ -119,15 +145,33 @@ public class FightState : MonoBehaviour
 
 		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
 		// cycle
-		int stopHeight = Random.Range(1, eventCount[dmg]+1);
+		int fieldCount = 0;
+		// add eventCount values
+		foreach (int e in eventCount) 
+		{
+			fieldCount += e;
+		}
+		float timePerField = Mathf.Min (maxTimePerCycle / fieldCount, 0.1f);
+		int stopHeight = Random.Range(0, eventCount[dmg]-1);
+		int cyclesLeft = cycles-1;
+		Debug.Log ("stopHeight: " + stopHeight);
+		// ding, ding, ding, ding, ding
 		while (true) {
-			if (dmgX == dmg && dmgY == stopHeight) 
+			if (dmgX == dmg && dmgY == stopHeight && cyclesLeft <= 0) 
 			{
 				break;
 			}
-			if (dmgY < eventCount[dmgX]) {
+			if (dmgX < enemy.dice) 
+			{
+				dmgX = enemy.dice-1;
+			}
+			if (dmgY < 0)
+			{
+				dmgY = 0;
+			}
+			if (dmgY < eventCount[dmgX]-1) {
 				dmgY++;
-				yield return new WaitForSeconds (0.009f);
+				yield return new WaitForSeconds (timePerField*(2/Mathf.Pow((cyclesLeft+1), 2)));
 			}
 			else 
 			{
@@ -138,9 +182,10 @@ public class FightState : MonoBehaviour
 				}
 				else 
 				{
-					dmgX = 0;
+					dmgX = enemy.dice-1;
+					cyclesLeft--;
 				}
-				yield return new WaitForSeconds (0.009f);
+				yield return new WaitForSeconds (timePerField*Mathf.Pow((2/(cyclesLeft+1)), 2));
 			}
 		}
 		// do damage if attack hits
@@ -154,8 +199,12 @@ public class FightState : MonoBehaviour
 			player.water += pot*2;
 			player.water += enemy.loot;
 		}
-		// reset shield and pot
+		yield return new WaitForSeconds (1.0f);
+		// reset shield and pot (and rolling)
 		shield = 0;
 		pot = 0;
+		rolling = false;
+		// spawn new enemy
+		spawnEnemy ();
 	}
 }
