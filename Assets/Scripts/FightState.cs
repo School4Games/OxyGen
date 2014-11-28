@@ -68,11 +68,14 @@ public class FightState : MonoBehaviour
 		GUI.Label (new Rect(10, 40, 120, 20), "Water: " + (player.water - shield - pot));
 
 		GUI.Label (new Rect(140, 10, 120, 20), "Shields: " + shield);
+		// bet on shields
 		shield = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 10, 120, 20), shield, 0, maxDmg - pot));
 
 		GUI.Label (new Rect(140, 40, 120, 20), "Bet: " + pot);
+		// bet on pot
 		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(player.water - shield, maxDmg - shield)));
-
+		
+		// stop betting, start rolling
 		if (!rolling) {
 			if (GUI.Button (new Rect(400, 10, 120, 50), "Hit me!"))
 			{
@@ -85,16 +88,21 @@ public class FightState : MonoBehaviour
 				}
 			}
 		}
-
+		
+		// rules for loot
+		// win case
 		GUI.Label (new Rect(530, 10, 150, 50), "Win: gain " + (pot + enemy.loot - shield) + " water");
+		// lose case
 		GUI.Label (new Rect(530, 40, 150, 50), "Lose: gain " + (-pot - shield) + " water");
-
+		
+		// for testing purpose only
 		GUI.Label (new Rect(Screen.width - 160, 10, 150, 50), "You survived for " + roundsSurvived + " rounds");
 
 		// background (graph window)
 		GUI.Box (new Rect(graphWindow.x -10, graphWindow.y -10, graphWindow.width + 20, graphWindow.height +20), "");
 		// shield points
 		// number of possibilities for event
+		// probability distribution visualization
 		for (int y=0; y<=RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides); y++) 
 		{
 			// dmg
