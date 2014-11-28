@@ -4,9 +4,9 @@ using System.Collections;
 public class Player
 {
 	//bool pressedButton = false;
-	public int health = 3;
+	public int initialHealth = 3;
 
-	public int water = 50;
+	public int initalwater = 50;
 
 	void Update () 
 	{
