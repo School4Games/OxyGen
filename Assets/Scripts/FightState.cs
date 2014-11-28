@@ -32,10 +32,10 @@ public class FightState : MonoBehaviour
 	int roundsSurvived = 0;
 
 	public Rect graphWindow = new Rect (10, 60, 800, 400);
-
 	public GUIStyle shieldStyle = new GUIStyle();
 	public GUIStyle normalStyle = new GUIStyle();
 	public GUIStyle dmgStyle = new GUIStyle();
+	private string startButton = "Hit me";
 
 	// Use this for initialization
 	void Start () 
@@ -73,16 +73,26 @@ public class FightState : MonoBehaviour
 		GUI.Label (new Rect(140, 40, 120, 20), "Bet: " + pot);
 		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(player.water - shield, maxDmg - shield)));
 
-		if (!rolling) {
-			if (GUI.Button (new Rect(400, 10, 120, 50), "Hit me!"))
-			{
-				// reset pointer
-				dmgX = 0;
-				dmgY = 0;
-				StartCoroutine ("roll");
-				if (player.health > 0) {
-					roundsSurvived++;
-				}
+		if (rolling) 
+		{
+			startButton = "Rolling...";
+		}
+		else if(player.health < 1) 
+		{	
+			startButton = "You are Dead";
+		}
+		if (!rolling && player.health > 0) 
+		{
+			startButton = "Hit me!";
+		}
+		if (GUI.Button (new Rect(400, 10, 120, 50), startButton ))
+		{
+			// reset pointer
+			dmgX = 0;
+			dmgY = 0;
+			StartCoroutine ("roll");
+			if (player.health > 0) {
+				roundsSurvived++;
 			}
 		}
 
