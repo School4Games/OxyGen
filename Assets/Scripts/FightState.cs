@@ -36,8 +36,6 @@ public class FightState : MonoBehaviour
 	public GUIStyle normalStyle = new GUIStyle();
 	public GUIStyle dmgStyle = new GUIStyle();
 	private string startButton = "Hit me";
-	private int health = 50;
-	private int water = 100;
 
 	// Use this for initialization
 	void Start () 
@@ -45,8 +43,7 @@ public class FightState : MonoBehaviour
 		// test
 		// get actual player here instead of creating new one
 		player = new Player ();
-		health = player.initialHealth;
-		water = player.initalwater;
+		player.Reset ();
 		//string log = "";
 		spawnEnemy ();
 
@@ -69,20 +66,20 @@ public class FightState : MonoBehaviour
 	{
 		int maxDmg = enemy.dice * enemy.sides;
 		//player stats
-		GUI.Label (new Rect(10, 10, 120, 20), "Health: " + health);
-		GUI.Label (new Rect(10, 40, 120, 20), "Water: " + (water - shield - pot));
+		GUI.Label (new Rect(10, 10, 120, 20), "Health: " + player.currentHealth);
+		GUI.Label (new Rect(10, 40, 120, 20), "Water: " + (player.currentWater - shield - pot));
 
 		GUI.Label (new Rect(140, 10, 120, 20), "Shields: " + shield);
 		shield = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 10, 120, 20), shield, 0, maxDmg - pot));
 
 		GUI.Label (new Rect(140, 40, 120, 20), "Bet: " + pot);
-		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(water - shield, maxDmg - shield)));
+		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(player.currentWater - shield, maxDmg - shield)));
 
 		if (rolling) 
 		{
 			startButton = "Rolling...";
 		}
-		else if(health < 1) 
+		else if(player.currentHealth < 1) 
 		{	
 			startButton = "You died. Reset?";
 		}
@@ -94,15 +91,14 @@ public class FightState : MonoBehaviour
 			dmgX = 0;
 			dmgY = 0;
 
-			if (health > 0) 
+			if (player.currentHealth > 0) 
 			{
 				StartCoroutine ("roll");
 				roundsSurvived++;
 			}
 			else
 			{
-				health = player.initialHealth;
-				water = player.initalwater;
+				player.Reset ();
 				roundsSurvived = 0;
 			}
 		}
@@ -161,8 +157,8 @@ public class FightState : MonoBehaviour
 		// do roll
 		dmg = enemy.attack ();
 		// confiscate stakes
-		water -= shield;
-		water -= pot;
+		player.currentWater -= shield;
+		player.currentWater -= pot;
 
 		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
 		// cycle
@@ -212,13 +208,13 @@ public class FightState : MonoBehaviour
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
-			health -= 1;
+			player.currentHealth -= 1;
 		}
 		// otherwise give loot
 		else 
 		{
-			water += pot*2;
-			water += enemy.loot;
+			player.currentWater += pot*2;
+			player.currentWater += enemy.loot;
 		}
 		yield return new WaitForSeconds (1.0f);
 		// reset shield and pot (and rolling)
