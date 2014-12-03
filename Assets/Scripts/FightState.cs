@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class FightState : MonoBehaviour 
 {
@@ -31,8 +32,11 @@ public class FightState : MonoBehaviour
 
 	int roundsSurvived = 0;
 
+	// UI
 	public GameObject graphWindow;
 	Rect graphRect;
+	public Slider shieldSlider;
+	public Text statsDisplay;
 
 	public GameObject barPrefab;
 
@@ -58,7 +62,19 @@ public class FightState : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		updateStatsDisplay ();
+	}
+
+	void updateSliderDimensions ()
+	{
+		float maxDmg = enemy.dice * enemy.sides;
+		shieldSlider.maxValue = maxDmg;
+	}
+
+	void updateStatsDisplay ()
+	{
+		statsDisplay.text = "";
+		statsDisplay.text += "Shields: " + shieldSlider.value + "\n";
 	}
 
 	void drawGraph () 
@@ -171,6 +187,9 @@ public class FightState : MonoBehaviour
 		enemy = new Enemy ();
 		enemy.dice = enemyDice;
 		enemy.sides = enemySides;
+
+		// update slider dimensions
+		updateSliderDimensions ();
 
 		// randomize values for next enemy
 		// take into account round?
