@@ -31,10 +31,11 @@ public class FightState : MonoBehaviour
 
 	int roundsSurvived = 0;
 
-	public GameObject graphWindow;
-	Rect graphRect;
+	public Rect graphWindow = new Rect (10, 60, 800, 400);
 
-	public GameObject barPrefab;
+	public GUIStyle shieldStyle = new GUIStyle();
+	public GUIStyle normalStyle = new GUIStyle();
+	public GUIStyle dmgStyle = new GUIStyle();
 
 	// Use this for initialization
 	void Start () 
@@ -44,8 +45,6 @@ public class FightState : MonoBehaviour
 		player = new Player ();
 		//string log = "";
 		spawnEnemy ();
-		// test
-		drawGraph ();
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
 		{
@@ -61,43 +60,7 @@ public class FightState : MonoBehaviour
 	
 	}
 
-	void drawGraph () 
-	{
-		graphRect = graphWindow.GetComponent<RectTransform>().rect;
-		float maxDmg = enemy.dice * enemy.sides;
-		float maxProbability = RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides);
-		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
-		
-		// dmg
-		for (int x=1; x<=maxDmg; x++) 
-		{
-			if (eventCount[x]>0) 
-			{
-			GameObject bar = (GameObject) Instantiate(barPrefab, Vector3.zero, Quaternion.identity);
-			RectTransform barRect = bar.GetComponent<RectTransform>();
-
-			float height = (float)eventCount[x]/maxProbability;
-			// set anchors to right percentage 
-			barRect.anchorMin = new Vector2 ((x-1)/maxDmg, 0);
-			barRect.anchorMax = new Vector2 ((x)/maxDmg, height);
-			
-			// make graphics fit anchors
-			barRect.sizeDelta = Vector2.one;
-
-			bar.transform.SetParent(graphWindow.transform, false);
-			// transform seems to be in relation to bottom center ...
-
-			// test; lower lesft corner
-			//barRect.anchorMin = Vector2.zero;
-			//barRect.anchorMax = Vector2.one;
-
-			// GUI.Label (new Rect(graphWindow.x + (x-1)*(graphWindow.width/maxDmg), graphWindow.y + y*(graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), graphWindow.width/maxDmg, graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), ""+(x), style);
-		
-			}
-		}
-	}
-
-	/*void OnGUI () 
+	void OnGUI () 
 	{
 		int maxDmg = enemy.dice * enemy.sides;
 		//player stats
@@ -160,7 +123,7 @@ public class FightState : MonoBehaviour
 				}
 			}
 		}
-	}*/
+	}
 
 	void spawnEnemy () 
 	{
