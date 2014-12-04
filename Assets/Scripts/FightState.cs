@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class FightState : MonoBehaviour 
+public class FightState : MonoBehaviour, IFightMenuMessageTarget
 {
 
 	Player player;
@@ -73,12 +73,30 @@ public class FightState : MonoBehaviour
 
 	void updateStatsDisplay ()
 	{
+		shield = Mathf.RoundToInt(shieldSlider.value);
 		statsDisplay.text = "";
-		statsDisplay.text += "Shields: " + shieldSlider.value + "\n";
+		statsDisplay.text += "Health: " + player.health + "\n";
+		statsDisplay.text += "Shields: " + shield + "\n";
+		statsDisplay.text += "Lootboost: " + pot+ "\n";
+		statsDisplay.text += "Water: " + (player.water - shield - pot) + "\n";
+	}
+
+	public void OnRoll ()
+	{
+		StartCoroutine ("roll");
 	}
 
 	void drawGraph () 
 	{
+		// delete old graph
+		foreach (Image panel in graphWindow.GetComponentsInChildren<Image>())
+		{
+			if (panel.gameObject.name.Contains("Bar"))
+			{
+				Destroy(panel.gameObject);
+			}
+		}
+
 		graphRect = graphWindow.GetComponent<RectTransform>().rect;
 		float maxDmg = enemy.dice * enemy.sides;
 		float maxProbability = RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides);
@@ -180,16 +198,9 @@ public class FightState : MonoBehaviour
 
 	void spawnEnemy () 
 	{
-		// reset pointer
-		dmgX = 0;
-		dmgY = 0;
-		
 		enemy = new Enemy ();
 		enemy.dice = enemyDice;
 		enemy.sides = enemySides;
-
-		// update slider dimensions
-		updateSliderDimensions ();
 
 		// randomize values for next enemy
 		// take into account round?
@@ -268,7 +279,14 @@ public class FightState : MonoBehaviour
 		shield = 0;
 		pot = 0;
 		rolling = false;
+		// reset pointer
+		dmgX = 0;
+		dmgY = 0;
 		// spawn new enemy
 		spawnEnemy ();
+		// update slider dimensions
+		updateSliderDimensions ();
+		// update graph
+		drawGraph ();
 	}
 }
