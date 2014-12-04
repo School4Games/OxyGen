@@ -35,8 +35,12 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	// UI
 	public GameObject graphWindow;
 	Rect graphRect;
+	float maxProbability = 0;
+	float maxDmg = 0;
+	int[] eventCount;
 	public Slider shieldSlider;
 	public Text statsDisplay;
+	public Image pointer;
 
 	public GameObject barPrefab;
 
@@ -50,6 +54,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		spawnEnemy ();
 		// test
 		drawGraph ();
+
+		pointer.enabled = false;
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
 		{
@@ -65,8 +71,14 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		updateStatsDisplay ();
 	}
 
+	public void OnRoll ()
+	{
+		StartCoroutine ("roll");
+	}
+
 	void updateSliderDimensions ()
 	{
+		// can bet more than is currently in possession
 		float maxDmg = enemy.dice * enemy.sides;
 		shieldSlider.maxValue = maxDmg;
 	}
@@ -77,13 +89,24 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		statsDisplay.text = "";
 		statsDisplay.text += "Health: " + player.health + "\n";
 		statsDisplay.text += "Shields: " + shield + "\n";
-		statsDisplay.text += "Lootboost: " + pot+ "\n";
-		statsDisplay.text += "Water: " + (player.water - shield - pot) + "\n";
+		//statsDisplay.text += "Lootboost: " + pot+ "\n";
+		string winLoot = "<color=#00FF00>" + (enemy.loot - shield + pot*2) + "</color>";
+		string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
+		// water
+		statsDisplay.text += "Scrap: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
 	}
 
-	public void OnRoll ()
-	{
-		StartCoroutine ("roll");
+	void updatePointerPosition () {
+		RectTransform pointerRect = pointer.GetComponent<RectTransform> ();
+
+		float height = (float)dmgY/maxProbability;
+
+		// set anchors to right percentage
+		pointerRect.anchorMin = new Vector2 ((dmgX-1)/maxDmg, height);
+		pointerRect.anchorMax = new Vector2 ((dmgX)/maxDmg, height + 0.05f);
+
+		// make graphics fit anchors
+		pointerRect.sizeDelta = Vector2.one;
 	}
 
 	void drawGraph () 
@@ -98,9 +121,9 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 
 		graphRect = graphWindow.GetComponent<RectTransform>().rect;
-		float maxDmg = enemy.dice * enemy.sides;
-		float maxProbability = RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides);
-		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
+		maxDmg = enemy.dice * enemy.sides;
+		maxProbability = RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides);
+		eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
 		
 		// dmg
 		for (int x=1; x<=maxDmg; x++) 
@@ -214,9 +237,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		int maxDmg = enemy.dice * enemy.sides;
 		// do roll
 		dmg = enemy.attack ();
-		// confiscate stakes
-		player.water -= shield;
-		player.water -= pot;
 
 		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
 		// cycle
@@ -257,12 +277,18 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 				}
 				else 
 				{
-					dmgX = enemy.dice-1;
+					dmgX = enemy.dice;
 					cyclesLeft--;
 				}
 				yield return new WaitForSeconds (timePerField*Mathf.Pow((2/(cyclesLeft+1)), 2));
 			}
+			updatePointerPosition ();
+			pointer.enabled = true;
 		}
+		yield return new WaitForSeconds (1.0f);
+		// confiscate stakes
+		player.water -= shield;
+		player.water -= pot;
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
@@ -274,14 +300,16 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			player.water += pot*2;
 			player.water += enemy.loot;
 		}
-		yield return new WaitForSeconds (1.0f);
 		// reset shield and pot (and rolling)
+		shieldSlider.value = 0;
 		shield = 0;
 		pot = 0;
 		rolling = false;
 		// reset pointer
 		dmgX = 0;
 		dmgY = 0;
+		updatePointerPosition ();
+		pointer.enabled = false;
 		// spawn new enemy
 		spawnEnemy ();
 		// update slider dimensions
