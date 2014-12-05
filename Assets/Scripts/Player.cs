@@ -1,25 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player
+public class Player : MonoBehaviour
 {
-	//bool pressedButton = false;
+	// what tile is the player on?
+	Vector2 position = Vector2.zero;
+
 	public int health = 3;
 
 	public int water = 50;
 
-	void Update () 
+	void Start ()
 	{
-		/*if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && !pressedButton) 
-		{
-			transform.position += (Vector3.right*Input.GetAxis("Horizontal")).normalized;
-			transform.position += (Vector3.up*Input.GetAxis("Vertical")).normalized;
-			pressedButton = true;
-		}
-		else if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) 
-		{
-			pressedButton = false;
-		}*/
+		goToTile (0, 0);
+	}
+
+	// test
+	public void goToTile (float x, float y)
+	{
+		position.x = x;
+		position.y = y;
+		transform.position = new Vector3 (x, y, transform.position.z);
 	}
 }
 

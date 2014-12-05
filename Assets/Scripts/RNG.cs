@@ -29,6 +29,9 @@ public class RNG
 		return maximum;
 	}
 
+	// performance critical method (on spawn enemy in fights)
+	// as always: don't do weird stuff here or at least save all progress before you do
+	// optimize: Lars (recursive dice-reducing-until-1-die + "Memoize")
 	public static int[] getEventCount (int dice, int sides) 
 	{
 		int[] eventCount = new int[dice*sides+1];

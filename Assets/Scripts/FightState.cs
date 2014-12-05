@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class FightState : MonoBehaviour, IFightMenuMessageTarget
 {
 
-	Player player;
+	public Player player;
 
 	Enemy enemy;
 
@@ -47,9 +47,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	// Use this for initialization
 	void Start () 
 	{
-		// test
-		// get actual player here instead of creating new one
-		player = new Player ();
 		//string log = "";
 		spawnEnemy ();
 		// test
