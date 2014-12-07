@@ -14,7 +14,6 @@ public class WorldMap : MonoBehaviour {
 
 	enum OffsetMode {fromZero, fromCenter};
 
-	// make invisible in inspector?
 	public bool generated = false;
 
 	void Start ()
@@ -130,5 +129,38 @@ public class WorldMap : MonoBehaviour {
 		generated = true;
 		// apply
 		main.Apply();
+	}
+
+	public Vector2 worldPointToTile (Vector2 worldPoint)
+	{
+		Vector2 tileNr = Vector2.zero;
+		// calculate (reverse gethexCenter)
+		tileNr.x = (worldPoint.x + collider.bounds.extents.x - getOffset(OffsetMode.fromZero).x)/(1.5f*hexSideLength);
+
+		Debug.Log ("Tile#" + tileNr);
+		return tileNr;
+	}
+
+	public Vector2 tileToWorldPoint (Vector2 tileNr)
+	{
+		Vector2 worldPoint = Vector2.zero;
+		// fromzero because fromCenter is broken (or is it ...)
+		// texture space ;)
+		worldPoint = getHexCenter ((int)tileNr.x, (int)tileNr.y) + getOffset(OffsetMode.fromZero);
+		// from texture to world space
+		worldPoint.x /= main.width;
+		worldPoint.y /= main.height;
+		// sideLength in unitymeters
+		//worldPoint *= (1.5f * ((float)hexSideLength/(float)main.width));
+		worldPoint.x *= collider.bounds.extents.x;
+		worldPoint.y *= collider.bounds.extents.y;
+		worldPoint *= 1.5f;
+		worldPoint -= new Vector2(collider.bounds.extents.x, collider.bounds.extents.y);
+
+		Debug.Log ("WorldPoint: " + worldPoint + " = " 
+		    + (getHexCenter ((int)tileNr.x, (int)tileNr.y) + getOffset(OffsetMode.fromZero))
+			+ " / (" + main.width + ", " + main.height + ")"
+			+ " * " + (1.5f * ((float)hexSideLength/(float)main.width)));
+		return worldPoint;
 	}
 }

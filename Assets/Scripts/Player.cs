@@ -6,21 +6,33 @@ public class Player : MonoBehaviour
 	// what tile is the player on?
 	Vector2 position = Vector2.zero;
 
+	public int maxHealth = 3;
 	public int health = 3;
 
+	public int inventorySpace = 60;
 	public int water = 50;
+	public int oxygen = 10;
 
 	void Start ()
 	{
-		goToTile (0, 0);
+
 	}
 
 	// test
-	public void goToTile (float x, float y)
+	// assumes that player only moves 1 tile
+	// has to do check if moving to tile is possible
+	// probably return true on success for feedback to wherever this is called from
+	public void goToTile (Vector2 tileNr, WorldMap map)
 	{
-		position.x = x;
-		position.y = y;
-		transform.position = new Vector3 (x, y, transform.position.z);
+		position = tileNr;
+		Vector2 worldPosition = map.tileToWorldPoint(tileNr);
+		transform.position = new Vector3 (worldPosition.x, worldPosition.y, transform.position.z);
+	}
+
+	public void consumeResources ()
+	{
+		water--;
+		oxygen--;
 	}
 }
 

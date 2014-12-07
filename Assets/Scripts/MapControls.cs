@@ -1,15 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class MapControls : MonoBehaviour 
 {
 
-	public GameObject map;
+	public WorldMap map;
 
 	public Player player;
 
+	public Text water;
+
+	public Text oxygen;
+
+	public Text health;
+
+	void Start ()
+	{
+		player.goToTile (new Vector2 (0, 1), map);
+	}
+
 	void Update ()
 	{
+		// test
+		updateStatsDisplay ();
+
 		RaycastHit hitInfo;
 		if (Input.GetButtonDown ("Fire1"))
 		{
@@ -20,11 +35,16 @@ public class MapControls : MonoBehaviour
 				/*hitPoint.x /= map.gameObject.collider.bounds.extents.x;
 				hitPoint.y /= map.gameObject.collider.bounds.extents.y;*/
 
-				player.goToTile (hitPoint.x, hitPoint.y);
-
-				Debug.Log (hitPoint);
+				player.goToTile (map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y)), map);
+				player.consumeResources ();
 			}
-			// Debug.DrawLine (Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.ScreenToWorldPoint(Input.mousePosition) + Camera.main.transform.forward);
 		}
+	}
+
+	void updateStatsDisplay ()
+	{
+		water.text = " h2o: " + player.water; 
+		oxygen.text = " o2: " + player.oxygen;
+		health.text = " hp: " + player.health;
 	}
 }
