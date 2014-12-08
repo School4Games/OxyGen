@@ -90,7 +90,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		string winLoot = "<color=#00FF00>" + (enemy.loot - shield + pot*2) + "</color>";
 		string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
 		// water
-		statsDisplay.text += "Scrap: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+		statsDisplay.text += "Water: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
 	}
 
 	void updatePointerPosition () {

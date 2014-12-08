@@ -17,7 +17,7 @@ public class MapControls : MonoBehaviour
 
 	void Start ()
 	{
-		player.goToTile (new Vector2 (0, 1), map);
+		player.goToTile (new Vector2 (10, 10), map);
 	}
 
 	void Update ()
@@ -34,9 +34,13 @@ public class MapControls : MonoBehaviour
 				Vector2 hitPoint = hitInfo.point;
 				/*hitPoint.x /= map.gameObject.collider.bounds.extents.x;
 				hitPoint.y /= map.gameObject.collider.bounds.extents.y;*/
+				Vector2 tileNr = map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y));
 
-				player.goToTile (map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y)), map);
-				player.consumeResources ();
+				if (map.isNeighbour(player.position, tileNr)) 
+				{
+					player.goToTile (tileNr, map);
+					player.consumeResources ();
+				}
 			}
 		}
 	}

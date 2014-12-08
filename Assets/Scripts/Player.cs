@@ -4,7 +4,7 @@ using System.Collections;
 public class Player : MonoBehaviour
 {
 	// what tile is the player on?
-	Vector2 position = Vector2.zero;
+	public Vector2 position = Vector2.zero;
 
 	public int maxHealth = 3;
 	public int health = 3;

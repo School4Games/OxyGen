@@ -131,36 +131,156 @@ public class WorldMap : MonoBehaviour {
 		main.Apply();
 	}
 
+	// make utility class for stuff below?
+
+	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)
+	{
+		if ((tile2Nr.x + 1) % 2 != 0)
+		{
+			// up
+			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				Debug.Log ("up");
+				return true;
+			}
+			
+			// down
+			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("down");
+				return true;
+			}
+			
+			// lower left 
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("lower left");
+				return true;
+			}
+			
+			// lower right 
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("lower right");
+				return true;
+			}
+			
+			// upper left (left in square system)
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				Debug.Log ("upper left");
+				return true;
+			}
+			
+			// upper right (right in square system)
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				Debug.Log ("upper right");
+				return true;
+			}
+			
+			else return false;
+		}
+
+		else
+		{
+			// up
+			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				return true;
+			}
+
+			// down
+			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				return true;
+			}
+
+			// lower left (left in square system)
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				return true;
+			}
+
+			// lower right (right in square system)
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				return true;
+			}
+
+			// upper left
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				return true;
+			}
+
+			// upper right
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				return true;
+			}
+
+			else return false;
+		}
+	}
+
 	public Vector2 worldPointToTile (Vector2 worldPoint)
 	{
 		Vector2 tileNr = Vector2.zero;
-		// calculate (reverse gethexCenter)
-		tileNr.x = (worldPoint.x + collider.bounds.extents.x - getOffset(OffsetMode.fromZero).x)/(1.5f*hexSideLength);
 
-		Debug.Log ("Tile#" + tileNr);
+		// relative to center
+		worldPoint.x += collider.bounds.extents.x;
+		worldPoint.y += collider.bounds.extents.y;
+
+		// w.o. scale
+		worldPoint.x /= collider.bounds.size.x;
+		worldPoint.y /= collider.bounds.size.y;
+
+		// in pixels
+		worldPoint.x *= main.width;
+		worldPoint.y *= main.height;
+
+		worldPoint -= getOffset (OffsetMode.fromZero);
+
+		// reverse getHexCenter
+		tileNr.x = worldPoint.x / (1.5f * hexSideLength);
+		tileNr.x = Mathf.Round (tileNr.x);
+
+		// height of a regular triangle with hexSideLength as side length
+		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
+
+		if ((tileNr.x+1) % 2 == 0) 
+		{
+			worldPoint.y -= h;
+		}
+
+		tileNr.y = worldPoint.y / (2 * h);
+		tileNr.y = Mathf.Round (tileNr.y);
+
 		return tileNr;
 	}
 
 	public Vector2 tileToWorldPoint (Vector2 tileNr)
 	{
-		Vector2 worldPoint = Vector2.zero;
-		// fromzero because fromCenter is broken (or is it ...)
-		// texture space ;)
-		worldPoint = getHexCenter ((int)tileNr.x, (int)tileNr.y) + getOffset(OffsetMode.fromZero);
-		// from texture to world space
+		// height of a regular triangle with hexSideLength as side length
+		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
+
+		// in pixels
+		Vector2 worldPoint = getHexCenter ((int)tileNr.x, (int)tileNr.y);
+		worldPoint += getOffset (OffsetMode.fromZero);
+
+		// in units
 		worldPoint.x /= main.width;
 		worldPoint.y /= main.height;
-		// sideLength in unitymeters
-		//worldPoint *= (1.5f * ((float)hexSideLength/(float)main.width));
-		worldPoint.x *= collider.bounds.extents.x;
-		worldPoint.y *= collider.bounds.extents.y;
-		worldPoint *= 1.5f;
-		worldPoint -= new Vector2(collider.bounds.extents.x, collider.bounds.extents.y);
 
-		Debug.Log ("WorldPoint: " + worldPoint + " = " 
-		    + (getHexCenter ((int)tileNr.x, (int)tileNr.y) + getOffset(OffsetMode.fromZero))
-			+ " / (" + main.width + ", " + main.height + ")"
-			+ " * " + (1.5f * ((float)hexSideLength/(float)main.width)));
+		// w. scale
+		worldPoint.x *= collider.bounds.size.x;
+		worldPoint.y *= collider.bounds.size.y;
+
+		// relative to lower left map corner
+		worldPoint.x -= collider.bounds.extents.x;
+		worldPoint.y -= collider.bounds.extents.y;
+
 		return worldPoint;
 	}
 }

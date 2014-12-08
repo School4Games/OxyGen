@@ -37,7 +37,7 @@ public class RNG
 		int[] eventCount = new int[dice*sides+1];
 		// ???? gaaaahrgh!!!!
 		// stupid approach: int[] eventCount = {0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
-		// slightly less stupid approach. Because it's a computer, and computers are proficient at stupidity, right?
+		// slightly less stupid approach. Because it's a computer, and computers are proficient in doing stupid stuff, right?
 		// count ways to combine dice for all events. yes, all of them. ONE BY ONE.
 		eventCount = loop (sides, dice, eventCount, 0);
 		return eventCount;
