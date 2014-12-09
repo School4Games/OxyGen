@@ -262,9 +262,6 @@ public class WorldMap : MonoBehaviour {
 
 	public Vector2 tileToWorldPoint (Vector2 tileNr)
 	{
-		// height of a regular triangle with hexSideLength as side length
-		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
-
 		// in pixels
 		Vector2 worldPoint = getHexCenter ((int)tileNr.x, (int)tileNr.y);
 		worldPoint += getOffset (OffsetMode.fromZero);
