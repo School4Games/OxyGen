@@ -41,4 +41,8 @@ CyberSphere.exe
 # =============== #
 # Version Control #
 # =============== #
-*.orig
+*.orig*
+*.BACKUP*
+*.BASE*
+*.LOCAL*
+*.REMOTE*
