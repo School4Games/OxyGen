@@ -1,126 +1,283 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public class tile {
-	//note to self: spawning each tile as a gameobject (sprite) might kill performance for big maps
-	//consider using plane and uvs 
-	public int floor;
-	public int structure;
-	public int unit;
-}
-
 public class WorldMap : MonoBehaviour {
 
-	private tile[,] tiles;
+	Texture2D main;
 
-	public int width;
-	public int height;
+	public int[,] tiles = new int[16,16];
 
-	public Material floors;
-	public int floorRows;
-	public Material structures;
-	public int structureRows;
-	public Material units;
-	public int unitRows;
+	public Texture2D[] layerTextures;
+		
+	public Texture2D stamp;
+	public int hexSideLength = 64;
 
-	GameObject floorLayer;
-	GameObject structureLayer;
-	GameObject unitLayer;
+	enum OffsetMode {fromZero, fromCenter};
 
-	public void generate () {
-		tiles = new tile[width,height];
-		for (uint y=0; y<height; y++) {
-			for (uint x=0; x<width; x++) {
-				tiles[x,y] = new tile();
-			}
+	public bool generated = false;
+
+	void Start ()
+	{
+		main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		if (!generated)
+		{
+			generate ();
 		}
-		//do generation stuff
-		for (uint y=0; y<height; y++) {
-			for (uint x=0; x<height; x++) {
-
-			}
-		}
-		instantiateGraphics ();
 	}
 
-	public void instantiateGraphics () {
-		//create floor plane
-		//for testing
-		if (floorLayer != null) DestroyImmediate(floorLayer); 
-		if (floorLayer == null) floorLayer = createPlane(width, height, 1, floors);
-		//create structure plane
-		//create unit plane
-		//initiate 2D array
+	// performance critical function (on load)
+	// => don't do weird stuff here (or save beforehand)
+	// also optimize when freetime available
+	void placeTile (Vector2 center, int texture)
+	{
+		if (stamp != null) {
+			// calculate x and y coordinate from center and stamp dimensions
+			Vector2 startCorner = center - new Vector2(stamp.width/2, stamp.height/2);
+
+			// calculate brush colors from stamp grayscale (as alpha) and layer texture
+			Color[] brushColors = layerTextures[texture].GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
+			// get once and save?
+			Color[] stampColors = stamp.GetPixels ();
+			Color[] mapColors = main.GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
+			// calculate actual color to paint on map
+			for (int i=0; i<brushColors.Length; i++)
+			{
+				brushColors[i] = ((brushColors[i] * stampColors[i].grayscale) + (mapColors[i] * (1-stampColors[i].grayscale)));
+			}
+
+			// draw on texture
+			main.SetPixels((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height, brushColors);
+		}
 	}
 
-	public GameObject createPlane (int xTiles, int yTiles, float tileSize, Material material) {
-		GameObject plane = new GameObject();
-		MeshFilter meshFilter = plane.AddComponent<MeshFilter>();
-		plane.AddComponent<MeshRenderer>();
-		plane.renderer.material = material;
+	Vector2 getHexCenter (int x, int y)
+	{
+		Vector2 center = Vector2.zero;
 
-		meshFilter.sharedMesh = new Mesh();
-		Mesh mesh = meshFilter.sharedMesh;
+		// height of a regular triangle with hexSideLength as side length
+		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
 
-		Vector3[] vertices = new Vector3[xTiles * yTiles * 4];
-		int[] triangles = new int[xTiles * yTiles * 6];
-		Vector2[] uv = new Vector2[vertices.Length];
+		center.x += (1.5f * hexSideLength) * x;
 
-		string log = "";
-		for (int y=0; y<height; y++) {
-			for (int x=0; x<width; x++) {
-				/*log += "x:" + x + "y:" + y + ", ";
-				vertices[0] = new Vector3(0, 0, 0);
-				vertices[1] = new Vector3(1, 0, 0);
-				vertices[2] = new Vector3(0, 1, 0);
-				vertices[3] = new Vector3(1, 1, 0);
+		// offset every second column
+		if ((x+1) % 2 == 0)
+		{
+			center.y += h;
+		}
 
-				log += (x+(y*width-1))*4 + ", " + (x+(y*width-1)+1)*4 + ", " + (x+(y*width-1)+2)*4 + ", " + (x+(y*width-1)+3)*4 + ", ";
-				
-				triangles[0] = 0;
-				triangles[1] = 2;
-				triangles[2] = 1;
-				triangles[3] = 1;
-				triangles[4] = 2;
-				triangles[5] = 3;*/
-				//vertices confirmed to work
-				vertices[x*4+y*width*4] = new Vector3(x, y, 0);
-				vertices[x*4+1+y*width*4] = new Vector3((x+1), y, 0);
-				vertices[x*4+2+y*width*4] = new Vector3(x, (y+1), 0);
-				vertices[x*4+3+y*width*4] = new Vector3((x+1), (y+1), 0);
+		center.y += (2 * h) * y;
 
-				if ((x*4+y*width*4) > 755) {
-				log += (x*4+y*width*4) + ":" + new Vector3(x, y, 0) + ", "
-					+ (x*4+1+y*width*4) + ":" + new Vector3((x+1), y, 0) + ", "
-					+ (x*4+2+y*width*4) + ":" + new Vector3(x, (y+1), 0) + ", "
-					+ (x*4+3+y*width*4) + ":" + new Vector3((x+1), (y+1), 0) + ", "
-					+ "\n";
-				}
+		return center;
+	}
 
-				triangles[x*6+y*width*6] = x*4+y*width;
-				triangles[x*6+1+y*width*6] = x*4+2+y*width;
-				triangles[x*6+2+y*width*6] = x*4+1+y*width;
-				triangles[x*6+3+y*width*6] = x*4+1+y*width;
-				triangles[x*6+4+y*width*6] = x*4+2+y*width;
-				triangles[x*6+5+y*width*6] = x*4+3+y*width;
+	// probably save result?
+	// I somehow got the center wrong here ...
+	Vector2 getOffset (OffsetMode offsetMode)
+	{
+		Vector2 offset = Vector2.zero;
 
-				uv[x*4+y*width] = new Vector2(0, 0);
-				uv[x*4+1+y*width] = new Vector2(1, 0);
-				uv[x*4+2+y*width] = new Vector2(0, 1);
-				uv[x*4+3+y*width] = new Vector2(1, 1);
+		// height of a regular triangle with hexSideLength as side length
+		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
+
+		offset.x += tiles.GetUpperBound (0) / 2 * hexSideLength;
+
+		offset.y += tiles.GetUpperBound (1) * h;
+
+		Vector2 center = new Vector2 (main.width/2, main.height/2);
+
+		if (offsetMode == OffsetMode.fromCenter) 
+		{
+			offset = - offset;
+		}
+		else
+		{
+			offset = center - offset;
+		}
+
+		return offset;
+	}
+
+	public void generate () 
+	{
+		if (!main)
+		{
+			main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		}
+		// fill array
+		// test
+		for (int y=0; y<tiles.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<tiles.GetUpperBound(0); x++) 
+			{
+				// test
+				tiles[x,y] = Random.Range(0, 3);
 			}
 		}
 
-		Debug.Log(log);
+		// paint
+		for (int y=0; y<tiles.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<tiles.GetUpperBound(0); x++) 
+			{
+				Vector2 center = getHexCenter (x, y);
+				// test
+				center += getOffset (OffsetMode.fromZero);
+				placeTile(center, tiles[x,y]);
+			}
+		}
 
-		mesh.Clear();
-		mesh.vertices = vertices;
-		mesh.triangles = triangles;
-		mesh.uv = uv;
-		mesh.RecalculateNormals();
+		generated = true;
+		// apply
+		main.Apply();
+	}
 
-		plane.name = material.name;
-		return plane;
+	// make utility class for stuff below?
+
+	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)
+	{
+		if ((tile2Nr.x + 1) % 2 != 0)
+		{
+			// up
+			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				Debug.Log ("up");
+				return true;
+			}
+			
+			// down
+			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("down");
+				return true;
+			}
+			
+			// lower left 
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("lower left");
+				return true;
+			}
+			
+			// lower right 
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				Debug.Log ("lower right");
+				return true;
+			}
+			
+			// upper left (left in square system)
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				Debug.Log ("upper left");
+				return true;
+			}
+			
+			// upper right (right in square system)
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				Debug.Log ("upper right");
+				return true;
+			}
+			
+			else return false;
+		}
+
+		else
+		{
+			// up
+			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				return true;
+			}
+
+			// down
+			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				return true;
+			}
+
+			// lower left (left in square system)
+			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				return true;
+			}
+
+			// lower right (right in square system)
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
+			{
+				return true;
+			}
+
+			// upper left
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
+			{
+				return true;
+			}
+
+			// upper right
+			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 1)
+			{
+				return true;
+			}
+
+			else return false;
+		}
+	}
+
+	public Vector2 worldPointToTile (Vector2 worldPoint)
+	{
+		Vector2 tileNr = Vector2.zero;
+
+		// relative to center
+		worldPoint.x += collider.bounds.extents.x;
+		worldPoint.y += collider.bounds.extents.y;
+
+		// w.o. scale
+		worldPoint.x /= collider.bounds.size.x;
+		worldPoint.y /= collider.bounds.size.y;
+
+		// in pixels
+		worldPoint.x *= main.width;
+		worldPoint.y *= main.height;
+
+		worldPoint -= getOffset (OffsetMode.fromZero);
+
+		// reverse getHexCenter
+		tileNr.x = worldPoint.x / (1.5f * hexSideLength);
+		tileNr.x = Mathf.Round (tileNr.x);
+
+		// height of a regular triangle with hexSideLength as side length
+		float h = Mathf.Pow (3.0f, 0.5f) / 2 * hexSideLength;
+
+		if ((tileNr.x+1) % 2 == 0) 
+		{
+			worldPoint.y -= h;
+		}
+
+		tileNr.y = worldPoint.y / (2 * h);
+		tileNr.y = Mathf.Round (tileNr.y);
+
+		return tileNr;
+	}
+
+	public Vector2 tileToWorldPoint (Vector2 tileNr)
+	{
+		// in pixels
+		Vector2 worldPoint = getHexCenter ((int)tileNr.x, (int)tileNr.y);
+		worldPoint += getOffset (OffsetMode.fromZero);
+
+		// in units
+		worldPoint.x /= main.width;
+		worldPoint.y /= main.height;
+
+		// w. scale
+		worldPoint.x *= collider.bounds.size.x;
+		worldPoint.y *= collider.bounds.size.y;
+
+		// relative to lower left map corner
+		worldPoint.x -= collider.bounds.extents.x;
+		worldPoint.y -= collider.bounds.extents.y;
+
+		return worldPoint;
 	}
 }

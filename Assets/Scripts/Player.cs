@@ -1,25 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player
+public class Player : MonoBehaviour
 {
-	//bool pressedButton = false;
+	// what tile is the player on?
+	public Vector2 position = Vector2.zero;
+
+	public int maxHealth = 3;
 	public int health = 3;
 
+	public int inventorySpace = 60;
 	public int water = 50;
+	public int oxygen = 10;
 
-	void Update () 
+	void Start ()
 	{
-		/*if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && !pressedButton) 
-		{
-			transform.position += (Vector3.right*Input.GetAxis("Horizontal")).normalized;
-			transform.position += (Vector3.up*Input.GetAxis("Vertical")).normalized;
-			pressedButton = true;
-		}
-		else if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) 
-		{
-			pressedButton = false;
-		}*/
+
+	}
+
+	// test
+	// assumes that player only moves 1 tile
+	// has to do check if moving to tile is possible
+	// probably return true on success for feedback to wherever this is called from
+	public void goToTile (Vector2 tileNr, WorldMap map)
+	{
+		position = tileNr;
+		Vector2 worldPosition = map.tileToWorldPoint(tileNr);
+		transform.position = new Vector3 (worldPosition.x, worldPosition.y, transform.position.z);
+	}
+
+	public void consumeResources ()
+	{
+		water--;
+		oxygen--;
 	}
 }
 
