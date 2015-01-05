@@ -6,8 +6,11 @@ public class WorldMap : MonoBehaviour {
 	Texture2D main;
 
 	public int[,] tiles = new int[16,16];
+	public int[,] objects = new int[16,16];
 
 	public Texture2D[] layerTextures;
+
+	public GameObject[] objectPrefabs = new GameObject[4];
 		
 	public Texture2D stamp;
 	public int hexSideLength = 64;
@@ -99,6 +102,15 @@ public class WorldMap : MonoBehaviour {
 
 	public void generate () 
 	{
+		placeTiles ();
+		placeObjects ();
+
+		generated = true;
+
+	}
+
+	void placeTiles ()
+	{
 		if (!main)
 		{
 			main = (Texture2D)renderer.sharedMaterial.mainTexture;
@@ -113,7 +125,7 @@ public class WorldMap : MonoBehaviour {
 				tiles[x,y] = Random.Range(0, 3);
 			}
 		}
-
+		
 		// paint
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
 		{
@@ -126,9 +138,42 @@ public class WorldMap : MonoBehaviour {
 			}
 		}
 
-		generated = true;
 		// apply
 		main.Apply();
+	}
+
+	void placeObjects ()
+	{
+		// fill array
+		// test
+		for (int y=0; y<objects.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<objects.GetUpperBound(0); x++) 
+			{
+				// test
+				objects[x,y] = Random.Range(1, 4);
+				if (Random.value < 0.7f)
+				{
+					objects[x,y] = -1;
+				}
+			}
+		}
+		objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
+
+		// place
+		for (int y=0; y<objects.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<objects.GetUpperBound(0); x++) 
+			{
+				if (objects[x,y] >= 0)
+				{
+					GameObject placedObject = (GameObject) Instantiate (objectPrefabs[objects[x,y]], new Vector3 (0,0,-1), Quaternion.identity);
+					Vector2 worldPosition = tileToWorldPoint(new Vector2 (x, y));
+					placedObject.transform.parent = transform;
+					placedObject.transform.position = new Vector3 (worldPosition.x, worldPosition.y, placedObject.transform.position.z);
+				}
+			}
+		}
 	}
 
 	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)
