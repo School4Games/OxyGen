@@ -131,97 +131,39 @@ public class WorldMap : MonoBehaviour {
 		main.Apply();
 	}
 
-	// make utility class for stuff below?
-
 	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)
 	{
-		if ((tile2Nr.x + 1) % 2 != 0)
+		bool neighbour = false;
+		// cardinal directions
+		if ((Mathf.Abs(tile2Nr.x - tile1Nr.x) + Mathf.Abs(tile2Nr.y - tile1Nr.y)) == 1)
 		{
-			// up
-			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
-			{
-				Debug.Log ("up");
-				return true;
-			}
-			
-			// down
-			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("down");
-				return true;
-			}
-			
-			// lower left 
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("lower left");
-				return true;
-			}
-			
-			// lower right 
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("lower right");
-				return true;
-			}
-			
-			// upper left (left in square system)
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				Debug.Log ("upper left");
-				return true;
-			}
-			
-			// upper right (right in square system)
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				Debug.Log ("upper right");
-				return true;
-			}
-			
-			else return false;
+			Debug.Log (tile1Nr + ", " + tile2Nr);
+			neighbour = true;
 		}
 
-		else
+		// diagonals
+
+		// even
+		else if ((tile2Nr.x + 1) % 2 == 0)
 		{
-			// up
-			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			Debug.Log ("even " + (tile2Nr.y - tile1Nr.y));
+			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == -1)
 			{
-				return true;
+				neighbour = true;
 			}
-
-			// down
-			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				return true;
-			}
-
-			// lower left (left in square system)
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				return true;
-			}
-
-			// lower right (right in square system)
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				return true;
-			}
-
-			// upper left
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				return true;
-			}
-
-			// upper right
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 1)
-			{
-				return true;
-			}
-
-			else return false;
 		}
+		// odd
+		else if ((tile2Nr.x + 1) % 2 != 0)
+		{
+			Debug.Log ("even " + (tile2Nr.y - tile1Nr.y));
+			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == 1)
+			{
+				neighbour = true;
+			}
+		}
+
+		return neighbour;
+		
 	}
 
 	public Vector2 worldPointToTile (Vector2 worldPoint)
