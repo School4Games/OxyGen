@@ -7,6 +7,8 @@ public class MapControls : MonoBehaviour
 
 	public WorldMap map;
 
+	public GameState gamestate;
+
 	public Player player;
 
 	public Text water;
@@ -33,7 +35,6 @@ public class MapControls : MonoBehaviour
 
 	void Update ()
 	{
-		// test
 		updateStatsDisplay ();
 
 		RaycastHit hitInfo;
@@ -50,6 +51,7 @@ public class MapControls : MonoBehaviour
 				if (map.isNeighbour(player.position, tileNr)) 
 				{
 					player.goToTile (tileNr, map);
+					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 					player.consumeResources ();
 				}
 			}

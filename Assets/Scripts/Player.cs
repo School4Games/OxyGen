@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 	public int inventorySpace = 60;
 	public int water = 50;
 	public int oxygen = 10;
+	public int scrap = 0;
 
 	void Start ()
 	{

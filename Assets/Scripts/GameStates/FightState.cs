@@ -151,72 +151,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 	}
 
-	/*void OnGUI () 
-	{
-		int maxDmg = enemy.dice * enemy.sides;
-		//player stats
-		GUI.Label (new Rect(10, 10, 120, 20), "Health: " + player.health);
-		GUI.Label (new Rect(10, 40, 120, 20), "Water: " + (player.water - shield - pot));
-
-		GUI.Label (new Rect(140, 10, 120, 20), "Shields: " + shield);
-		// bet on shields
-		shield = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 10, 120, 20), shield, 0, maxDmg - pot));
-
-		GUI.Label (new Rect(140, 40, 120, 20), "Bet: " + pot);
-		// bet on pot
-		pot = Mathf.RoundToInt (GUI.HorizontalSlider (new Rect(270, 40, 120, 20), pot, 0, Mathf.Min(player.water - shield, maxDmg - shield)));
-		
-		// stop betting, start rolling
-		if (!rolling) {
-			if (GUI.Button (new Rect(400, 10, 120, 50), "Hit me!"))
-			{
-				// reset pointer
-				dmgX = 0;
-				dmgY = 0;
-				StartCoroutine ("roll");
-				if (player.health > 0) {
-					roundsSurvived++;
-				}
-			}
-		}
-		
-		// rules for loot
-		// win case
-		GUI.Label (new Rect(530, 10, 150, 50), "Win: gain " + (pot + enemy.loot - shield) + " water");
-		// lose case
-		GUI.Label (new Rect(530, 40, 150, 50), "Lose: gain " + (-pot - shield) + " water");
-		
-		// for testing purpose only
-		GUI.Label (new Rect(Screen.width - 160, 10, 150, 50), "You survived for " + roundsSurvived + " rounds");
-
-		// background (graph window)
-		GUI.Box (new Rect(graphWindow.x -10, graphWindow.y -10, graphWindow.width + 20, graphWindow.height +20), "");
-		// shield points
-		// number of possibilities for event
-		// probability distribution visualization
-		for (int y=0; y<=RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides); y++) 
-		{
-			// dmg
-			for (int x=0; x<=maxDmg; x++) 
-			{
-				if (RNG.getEventCount(enemy.dice, enemy.sides)[x] > y) 
-				{
-					GUIStyle style = normalStyle;
-					if (x<=shield)
-					{
-						style = shieldStyle;
-					}
-					if (dmgX == x && dmgY == y)
-					{
-						style = dmgStyle;
-					}
-					GUI.Label (new Rect(graphWindow.x + (x-1)*(graphWindow.width/maxDmg), graphWindow.y + y*(graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), graphWindow.width/maxDmg, graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), ""+(x), style);
-				}
-			}
-		}
-	}*/
-
-	void spawnEnemy () 
+	public void spawnEnemy () 
 	{
 		enemy = new Enemy ();
 		enemy.dice = enemyDice;

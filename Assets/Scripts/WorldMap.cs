@@ -8,16 +8,21 @@ public class WorldMap : MonoBehaviour {
 	public int[,] tiles = new int[16,16];
 	public int[,] objects = new int[16,16];
 
-	public Texture2D[] layerTextures;
+	public Terrain[] terrains;
 
 	public GameObject[] objectPrefabs = new GameObject[4];
 		
 	public Texture2D stamp;
 	public int hexSideLength = 64;
 
+	Color[] black;
+
 	enum OffsetMode {fromZero, fromCenter};
 
 	public bool generated = false;
+
+	// not the best name
+	GameObject objectContainer;
 
 	void Start ()
 	{
@@ -26,6 +31,26 @@ public class WorldMap : MonoBehaviour {
 		{
 			generate ();
 		}
+	}
+
+	void clearTexture ()
+	{
+		if (black == null)
+		{
+			black = new Color[main.width*main.height];
+			for (int i=0; i<black.Length; i++)
+			{
+				black[i] = Color.black;
+			}
+		}
+		main.SetPixels (black);
+		main.Apply();
+	}
+
+	void clearObjects ()
+	{
+		// mwahaha
+		DestroyImmediate (objectContainer);
 	}
 
 	// performance critical function (on load)
@@ -38,7 +63,7 @@ public class WorldMap : MonoBehaviour {
 			Vector2 startCorner = center - new Vector2(stamp.width/2, stamp.height/2);
 
 			// calculate brush colors from stamp grayscale (as alpha) and layer texture
-			Color[] brushColors = layerTextures[texture].GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
+			Color[] brushColors = terrains[texture].texture.GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
 			// get once and save?
 			Color[] stampColors = stamp.GetPixels ();
 			Color[] mapColors = main.GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
@@ -102,7 +127,13 @@ public class WorldMap : MonoBehaviour {
 
 	public void generate () 
 	{
+		if (!main)
+		{
+			main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		}
+		clearTexture ();
 		placeTiles ();
+		clearObjects ();
 		placeObjects ();
 
 		generated = true;
@@ -111,10 +142,6 @@ public class WorldMap : MonoBehaviour {
 
 	void placeTiles ()
 	{
-		if (!main)
-		{
-			main = (Texture2D)renderer.sharedMaterial.mainTexture;
-		}
 		// fill array
 		// test
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
@@ -161,6 +188,8 @@ public class WorldMap : MonoBehaviour {
 		objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
 
 		// place
+		objectContainer = new GameObject ();
+		objectContainer.transform.parent = transform;
 		for (int y=0; y<objects.GetUpperBound(1); y++) 
 		{
 			for (int x=0; x<objects.GetUpperBound(0); x++) 
@@ -169,7 +198,7 @@ public class WorldMap : MonoBehaviour {
 				{
 					GameObject placedObject = (GameObject) Instantiate (objectPrefabs[objects[x,y]], new Vector3 (0,0,-1), Quaternion.identity);
 					Vector2 worldPosition = tileToWorldPoint(new Vector2 (x, y));
-					placedObject.transform.parent = transform;
+					placedObject.transform.parent = objectContainer.transform;
 					placedObject.transform.position = new Vector3 (worldPosition.x, worldPosition.y, placedObject.transform.position.z);
 				}
 			}
@@ -182,7 +211,6 @@ public class WorldMap : MonoBehaviour {
 		// cardinal directions
 		if ((Mathf.Abs(tile2Nr.x - tile1Nr.x) + Mathf.Abs(tile2Nr.y - tile1Nr.y)) == 1)
 		{
-			Debug.Log (tile1Nr + ", " + tile2Nr);
 			neighbour = true;
 		}
 
@@ -191,7 +219,6 @@ public class WorldMap : MonoBehaviour {
 		// even
 		else if ((tile2Nr.x + 1) % 2 == 0)
 		{
-			Debug.Log ("even " + (tile2Nr.y - tile1Nr.y));
 			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == -1)
 			{
 				neighbour = true;
@@ -200,7 +227,6 @@ public class WorldMap : MonoBehaviour {
 		// odd
 		else if ((tile2Nr.x + 1) % 2 != 0)
 		{
-			Debug.Log ("even " + (tile2Nr.y - tile1Nr.y));
 			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == 1)
 			{
 				neighbour = true;
