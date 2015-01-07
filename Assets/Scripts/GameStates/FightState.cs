@@ -7,7 +7,9 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	public Player player;
 
-	Enemy enemy;
+	public GameState gamestate;
+
+	ArrayList enemies = new ArrayList();
 
 	int shield = 0;
 
@@ -26,10 +28,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	bool rolling = false;
 
-	// test
-	public int enemyDice = 3;
-	public int enemySides = 5;
-
 	int roundsSurvived = 0;
 
 	// UI
@@ -47,11 +45,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	// Use this for initialization
 	void Start () 
 	{
-		//string log = "";
-		spawnEnemy ();
-		// test
-		drawGraph ();
-
 		pointer.enabled = false;
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
@@ -65,7 +58,22 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	// Update is called once per frame
 	void Update () 
 	{
-		updateStatsDisplay ();
+		// all enemies defeated -> back to map
+		if (enemies.Count == 0 && !rolling) {
+			gamestate.switchState ();
+		}
+		else 
+		{
+			updateStatsDisplay ();
+		}
+	}
+
+	void OnEnable ()
+	{
+		// update slider dimensions
+		updateSliderDimensions ();
+		// update graph
+		drawGraph ();
 	}
 
 	public void OnRoll ()
@@ -76,7 +84,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	void updateSliderDimensions ()
 	{
 		// can bet more than is currently in possession
-		float maxDmg = enemy.dice * enemy.sides;
+		float maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
 		shieldSlider.maxValue = maxDmg;
 	}
 
@@ -87,7 +95,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		statsDisplay.text += "Health: " + player.health + "\n";
 		statsDisplay.text += "Shields: " + shield + "\n";
 		//statsDisplay.text += "Lootboost: " + pot+ "\n";
-		string winLoot = "<color=#00FF00>" + (enemy.loot - shield + pot*2) + "</color>";
+		string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
 		string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
 		// water
 		statsDisplay.text += "Water: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
@@ -118,9 +126,9 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 
 		graphRect = graphWindow.GetComponent<RectTransform>().rect;
-		maxDmg = enemy.dice * enemy.sides;
-		maxProbability = RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides);
-		eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
+		maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
+		maxProbability = RNG.getMaximumAbsoluteProbability((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
+		eventCount = RNG.getEventCount((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
 		
 		// dmg
 		for (int x=1; x<=maxDmg; x++) 
@@ -141,7 +149,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			bar.transform.SetParent(graphWindow.transform, false);
 			// transform seems to be in relation to bottom center ...
 
-			// test; lower lesft corner
+			// test; lower left corner
 			//barRect.anchorMin = Vector2.zero;
 			//barRect.anchorMax = Vector2.one;
 
@@ -151,26 +159,30 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 	}
 
-	public void spawnEnemy () 
+	public void spawnEnemy (int minDice, int maxDice, int minSides, int maxSides, int loot) 
 	{
-		enemy = new Enemy ();
-		enemy.dice = enemyDice;
-		enemy.sides = enemySides;
+		Enemy newEnemy = new Enemy();
+		newEnemy.dice = Random.Range (minDice, maxDice+1);;
+		newEnemy.sides = Random.Range (minSides, maxSides+1);;
+		newEnemy.loot = loot;
 
-		// randomize values for next enemy
-		// take into account round?
-		enemyDice = Random.Range (1, 4);
-		enemySides = Random.Range (2, 6);
+		enemies.Add (newEnemy);
+
+		// if the spawned enemy is the only enemy in the array
+		if (enemies.Count == 1)
+		{
+			drawGraph ();
+		}
 	}
 
 	IEnumerator roll () 
 	{
 		rolling = true;
-		int maxDmg = enemy.dice * enemy.sides;
+		int maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
 		// do roll
-		dmg = enemy.attack ();
+		dmg = (enemies[0] as Enemy).attack ();
 
-		int[] eventCount = RNG.getEventCount(enemy.dice, enemy.sides);
+		int[] eventCount = RNG.getEventCount((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
 		// cycle
 		int fieldCount = 0;
 		// add eventCount values
@@ -188,9 +200,9 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			{
 				break;
 			}
-			if (dmgX < enemy.dice) 
+			if (dmgX < (enemies[0] as Enemy).dice) 
 			{
-				dmgX = enemy.dice-1;
+				dmgX = (enemies[0] as Enemy).dice-1;
 			}
 			if (dmgY < 0)
 			{
@@ -209,7 +221,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 				}
 				else 
 				{
-					dmgX = enemy.dice;
+					dmgX = (enemies[0] as Enemy).dice;
 					cyclesLeft--;
 				}
 				yield return new WaitForSeconds (timePerField*Mathf.Pow((2/(cyclesLeft+1)), 2));
@@ -230,23 +242,19 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		else 
 		{
 			player.water += pot*2;
-			player.water += enemy.loot;
+			player.water += (enemies[0] as Enemy).loot;
 		}
 		// reset shield and pot (and rolling)
 		shieldSlider.value = 0;
 		shield = 0;
 		pot = 0;
-		rolling = false;
 		// reset pointer
 		dmgX = 0;
 		dmgY = 0;
 		updatePointerPosition ();
 		pointer.enabled = false;
-		// spawn new enemy
-		spawnEnemy ();
-		// update slider dimensions
-		updateSliderDimensions ();
-		// update graph
-		drawGraph ();
+		// kill enemy
+		enemies.RemoveAt (0);
+		rolling = false;
 	}
 }

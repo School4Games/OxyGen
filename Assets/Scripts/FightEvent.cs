@@ -9,4 +9,6 @@ public class FightEvent : Event {
 
 	public int minSides;
 	public int maxSides;
+
+	public int loot;
 }

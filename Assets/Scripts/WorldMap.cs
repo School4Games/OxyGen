@@ -102,6 +102,10 @@ public class WorldMap : MonoBehaviour {
 	// I somehow got the center wrong here ...
 	Vector2 getOffset (OffsetMode offsetMode)
 	{
+		if (!main)
+		{
+			main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		}
 		Vector2 offset = Vector2.zero;
 
 		// height of a regular triangle with hexSideLength as side length

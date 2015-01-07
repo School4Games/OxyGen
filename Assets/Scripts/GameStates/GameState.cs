@@ -4,10 +4,10 @@ using System.Collections;
 public class GameState : MonoBehaviour 
 {
 
-	public GameObject mapState;
+	public MapState mapState;
 	public WorldMap worldMap;
 	
-	public GameObject fightState;
+	public FightState fightState;
 
 	public Player player;
 
@@ -30,10 +30,27 @@ public class GameState : MonoBehaviour
 		else
 		{
 			// fight events
+			FightEvent[] fightEvents = worldMap.terrains[terrain].fightEvents;
+			bool enemySpawned = false;
+			foreach (FightEvent fightEvent in fightEvents) 
+			{
+				for (int i=0; i<=fightEvent.repetitions; i++)
+				{
+					if (Random.value < fightEvent.probability)
+					{
+						fightState.spawnEnemy(fightEvent.minDice, fightEvent.maxDice, fightEvent.minSides, fightEvent.maxSides, fightEvent.loot);
+						enemySpawned = true;
+					}
+				}
+			}
+			if (enemySpawned) 
+			{
+				switchState ();
+			}
 
+			// should pause here according to game design department
 
 			// resource events
-			Debug.Log ("choosing event for " + terrain + ", " + obj);
 			ResourceEvent[] resourceEvents = worldMap.terrains[terrain].resourceEvents;
 			foreach (ResourceEvent resourceEvent in resourceEvents)
 			{
@@ -56,9 +73,10 @@ public class GameState : MonoBehaviour
 		}
 	}
 
+	// called from the currently active state to get to the other one
 	public void switchState ()
 	{
-		mapState.SetActive(!mapState.activeSelf);
-		fightState.SetActive(!fightState.activeSelf);
+		mapState.gameObject.SetActive(!mapState.gameObject.activeSelf);
+		fightState.gameObject.SetActive(!fightState.gameObject.activeSelf);
 	}
 }
