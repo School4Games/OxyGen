@@ -193,7 +193,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		float timePerField = Mathf.Min (maxTimePerCycle / fieldCount, 0.1f);
 		int stopHeight = Random.Range(0, eventCount[dmg]-1);
 		int cyclesLeft = cycles-1;
-		Debug.Log ("stopHeight: " + stopHeight);
 		// ding, ding, ding, ding, ding
 		while (true) {
 			if (dmgX == dmg && dmgY == stopHeight && cyclesLeft <= 0) 

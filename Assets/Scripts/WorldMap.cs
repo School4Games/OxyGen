@@ -135,6 +135,8 @@ public class WorldMap : MonoBehaviour {
 		{
 			main = (Texture2D)renderer.sharedMaterial.mainTexture;
 		}
+		// test (savegames)
+		Random.seed = 50;
 		clearTexture ();
 		placeTiles ();
 		clearObjects ();
