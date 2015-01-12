@@ -5,11 +5,17 @@ public class GameState : MonoBehaviour
 {
 
 	public MapState mapState;
-	public WorldMap worldMap;
-	
 	public FightState fightState;
+	public DungeonState dungeonState;
+
+	public WorldMap worldMap;
+
+	public GameObject mapUI;
+	public GameObject fightUI;
 
 	public Player player;
+
+	public enum State{Map, Fight, Dungeon};
 
 	void Update () 
 	{
@@ -74,9 +80,28 @@ public class GameState : MonoBehaviour
 	}
 
 	// called from the currently active state to get to the other one
-	public void switchState ()
+	public void switchState (State state)
 	{
+		if (state = State.Dungeon)
+		{
+			mapState.gameObject.SetActive(false);
+			fightState.gameObject.SetActive(false);
+			dungeonState.gameObject.SetActive (true);
+		}
+		if (state = State.Fight)
+		{
+			mapState.gameObject.SetActive(false);
+			fightState.gameObject.SetActive(false);
+			dungeonState.gameObject.SetActive (true);
+		}
+		if (state = State.Map)
+		{
+			mapState.gameObject.SetActive(false);
+			fightState.gameObject.SetActive(false);
+			dungeonState.gameObject.SetActive (true);
+		}
 		mapState.gameObject.SetActive(!mapState.gameObject.activeSelf);
+		fightUI.gameObject.SetActive(!fightState.gameObject.activeSelf);
 		fightState.gameObject.SetActive(!fightState.gameObject.activeSelf);
 	}
 }

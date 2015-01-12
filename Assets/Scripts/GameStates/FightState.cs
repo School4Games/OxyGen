@@ -59,7 +59,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	void Update () 
 	{
 		// all enemies defeated -> back to map
-		if (enemies.Count == 0 && !rolling) {
+		if (enemies.Count == 0 && !rolling) 
+		{
 			gamestate.switchState ();
 		}
 		else 
@@ -70,8 +71,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	void OnEnable ()
 	{
-		// update slider dimensions
-		updateSliderDimensions ();
 		// update graph
 		drawGraph ();
 	}
@@ -116,7 +115,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	void drawGraph () 
 	{
-		// delete old graph
 		foreach (Image panel in graphWindow.GetComponentsInChildren<Image>())
 		{
 			if (panel.gameObject.name.Contains("Bar"))
@@ -157,6 +155,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		
 			}
 		}
+
+		updateSliderDimensions ();
 	}
 
 	public void spawnEnemy (int minDice, int maxDice, int minSides, int maxSides, int loot) 
@@ -255,5 +255,13 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		// kill enemy
 		enemies.RemoveAt (0);
 		rolling = false;
+		if (enemies.Count > 0) 
+		{
+			drawGraph ();
+		}
+		else
+		{
+			gamestate.switchState ();
+		}
 	}
 }
