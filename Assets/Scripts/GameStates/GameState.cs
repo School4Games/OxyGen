@@ -11,6 +11,8 @@ public class GameState : MonoBehaviour
 
 	public Player player;
 
+	public GameObject particlePrefab;
+
 	void Update () 
 	{
 		// test
@@ -56,21 +58,31 @@ public class GameState : MonoBehaviour
 			{
 				if (Random.value < resourceEvent.probability)
 				{
+					int amount = Random.Range (resourceEvent.minAmount, resourceEvent.maxAmount+1);
+					spawnParticles (amount);
 					if (resourceEvent.type == ResourceEvent.Type.Oxygen) 
 					{
-						player.oxygen += Random.Range (resourceEvent.minAmount, resourceEvent.maxAmount+1);
+						player.oxygen += amount;
 					}
 					if (resourceEvent.type == ResourceEvent.Type.Water) 
 					{
-						player.water += Random.Range (resourceEvent.minAmount, resourceEvent.maxAmount+1);
+						player.water += amount;
 					}
 					if (resourceEvent.type == ResourceEvent.Type.Scrap) 
 					{
-						player.scrap += Random.Range (resourceEvent.minAmount, resourceEvent.maxAmount+1);
+						player.scrap += amount;
 					}
 				}
 			}
 		}
+	}
+
+	void spawnParticles (int amount)
+	{
+		GameObject particle = (GameObject) Instantiate (particlePrefab);
+		particle.transform.position = player.transform.position;
+		ResourceParticles resourceParticles = particle.GetComponent ("ResourceParticles") as ResourceParticles;
+		resourceParticles.emit (amount);
 	}
 
 	// called from the currently active state to get to the other one
