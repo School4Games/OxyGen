@@ -6,15 +6,23 @@ public class WorldMap : MonoBehaviour {
 	Texture2D main;
 
 	public int[,] tiles = new int[16,16];
+	public int[,] objects = new int[16,16];
 
-	public Texture2D[] layerTextures;
+	public Terrain[] terrains;
+
+	public GameObject[] objectPrefabs = new GameObject[4];
 		
 	public Texture2D stamp;
 	public int hexSideLength = 64;
 
+	Color[] black;
+
 	enum OffsetMode {fromZero, fromCenter};
 
 	public bool generated = false;
+
+	// not the best name
+	GameObject objectContainer;
 
 	void Start ()
 	{
@@ -23,6 +31,26 @@ public class WorldMap : MonoBehaviour {
 		{
 			generate ();
 		}
+	}
+
+	void clearTexture ()
+	{
+		if (black == null)
+		{
+			black = new Color[main.width*main.height];
+			for (int i=0; i<black.Length; i++)
+			{
+				black[i] = Color.black;
+			}
+		}
+		main.SetPixels (black);
+		main.Apply();
+	}
+
+	void clearObjects ()
+	{
+		// mwahaha
+		DestroyImmediate (objectContainer);
 	}
 
 	// performance critical function (on load)
@@ -35,7 +63,7 @@ public class WorldMap : MonoBehaviour {
 			Vector2 startCorner = center - new Vector2(stamp.width/2, stamp.height/2);
 
 			// calculate brush colors from stamp grayscale (as alpha) and layer texture
-			Color[] brushColors = layerTextures[texture].GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
+			Color[] brushColors = terrains[texture].texture.GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
 			// get once and save?
 			Color[] stampColors = stamp.GetPixels ();
 			Color[] mapColors = main.GetPixels ((int)startCorner.x, (int)startCorner.y, stamp.width, stamp.height);
@@ -74,6 +102,10 @@ public class WorldMap : MonoBehaviour {
 	// I somehow got the center wrong here ...
 	Vector2 getOffset (OffsetMode offsetMode)
 	{
+		if (!main)
+		{
+			main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		}
 		Vector2 offset = Vector2.zero;
 
 		// height of a regular triangle with hexSideLength as side length
@@ -103,6 +135,19 @@ public class WorldMap : MonoBehaviour {
 		{
 			main = (Texture2D)renderer.sharedMaterial.mainTexture;
 		}
+		// test (savegames)
+		Random.seed = 50;
+		clearTexture ();
+		placeTiles ();
+		clearObjects ();
+		placeObjects ();
+
+		generated = true;
+
+	}
+
+	void placeTiles ()
+	{
 		// fill array
 		// test
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
@@ -113,7 +158,7 @@ public class WorldMap : MonoBehaviour {
 				tiles[x,y] = Random.Range(0, 3);
 			}
 		}
-
+		
 		// paint
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
 		{
@@ -126,102 +171,76 @@ public class WorldMap : MonoBehaviour {
 			}
 		}
 
-		generated = true;
 		// apply
 		main.Apply();
 	}
 
-	// make utility class for stuff below?
+	void placeObjects ()
+	{
+		// fill array
+		// test
+		for (int y=0; y<objects.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<objects.GetUpperBound(0); x++) 
+			{
+				// test
+				objects[x,y] = Random.Range(1, 4);
+				if (Random.value < 0.7f)
+				{
+					objects[x,y] = -1;
+				}
+			}
+		}
+		objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
+
+		// place
+		objectContainer = new GameObject ();
+		objectContainer.transform.parent = transform;
+		for (int y=0; y<objects.GetUpperBound(1); y++) 
+		{
+			for (int x=0; x<objects.GetUpperBound(0); x++) 
+			{
+				if (objects[x,y] >= 0)
+				{
+					GameObject placedObject = (GameObject) Instantiate (objectPrefabs[objects[x,y]], new Vector3 (0,0,-1), Quaternion.identity);
+					Vector2 worldPosition = tileToWorldPoint(new Vector2 (x, y));
+					placedObject.transform.parent = objectContainer.transform;
+					placedObject.transform.position = new Vector3 (worldPosition.x, worldPosition.y, placedObject.transform.position.z);
+				}
+			}
+		}
+	}
 
 	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)
 	{
-		if ((tile2Nr.x + 1) % 2 != 0)
+		bool neighbour = false;
+		// cardinal directions
+		if ((Mathf.Abs(tile2Nr.x - tile1Nr.x) + Mathf.Abs(tile2Nr.y - tile1Nr.y)) == 1)
 		{
-			// up
-			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
-			{
-				Debug.Log ("up");
-				return true;
-			}
-			
-			// down
-			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("down");
-				return true;
-			}
-			
-			// lower left 
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("lower left");
-				return true;
-			}
-			
-			// lower right 
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				Debug.Log ("lower right");
-				return true;
-			}
-			
-			// upper left (left in square system)
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				Debug.Log ("upper left");
-				return true;
-			}
-			
-			// upper right (right in square system)
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				Debug.Log ("upper right");
-				return true;
-			}
-			
-			else return false;
+			neighbour = true;
 		}
 
-		else
+		// diagonals
+
+		// even
+		else if ((tile2Nr.x + 1) % 2 == 0)
 		{
-			// up
-			if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == 1)
+			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == -1)
 			{
-				return true;
+				neighbour = true;
 			}
-
-			// down
-			else if (tile2Nr.x - tile1Nr.x == 0 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				return true;
-			}
-
-			// lower left (left in square system)
-			else if (tile2Nr.x - tile1Nr.x == -1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				return true;
-			}
-
-			// lower right (right in square system)
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 0)
-			{
-				return true;
-			}
-
-			// upper left
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == -1)
-			{
-				return true;
-			}
-
-			// upper right
-			else if (tile2Nr.x - tile1Nr.x == 1 && tile2Nr.y - tile1Nr.y == 1)
-			{
-				return true;
-			}
-
-			else return false;
 		}
+		// odd
+		else if ((tile2Nr.x + 1) % 2 != 0)
+		{
+			if (Mathf.Abs(tile2Nr.x - tile1Nr.x) == 1 && (tile2Nr.y - tile1Nr.y) == 1)
+			{
+				neighbour = true;
+			}
+		}
+
+		return neighbour;
+		
 	}
 
 	public Vector2 worldPointToTile (Vector2 worldPoint)
