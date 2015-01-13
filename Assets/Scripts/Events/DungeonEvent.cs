@@ -2,13 +2,10 @@
 using System.Collections;
 
 [System.Serializable]
-public class Terrain {
-
-	public string name;
-
-	public Texture2D texture;
+public class DungeonEvent : Event {
 
 	public ResourceEvent[] resourceEvents;
 	public FightEvent[] fightEvents;
-	public DungeonEvent[] dungeonEvents;
+
+	public int floors;
 }

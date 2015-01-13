@@ -28,8 +28,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	bool rolling = false;
 
-	int roundsSurvived = 0;
-
 	// UI
 	public GameObject graphWindow;
 	Rect graphRect;
@@ -43,7 +41,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	public GameObject barPrefab;
 
 	// Use this for initialization
-	void Start () 
+	void Start ()
 	{
 		pointer.enabled = false;
 		// test
@@ -61,6 +59,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		// all enemies defeated -> back to map
 		if (enemies.Count == 0 && !rolling) 
 		{
+			gamestate.fighting = false;
 			gamestate.switchState ();
 		}
 		else 
@@ -89,15 +88,18 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	void updateStatsDisplay ()
 	{
-		shield = Mathf.RoundToInt(shieldSlider.value);
-		statsDisplay.text = "";
-		statsDisplay.text += "Health: " + player.health + "\n";
-		statsDisplay.text += "Shields: " + shield + "\n";
-		//statsDisplay.text += "Lootboost: " + pot+ "\n";
-		string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
-		string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
-		// water
-		statsDisplay.text += "Water: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+		if (enemies.Count > 0)
+		{
+			shield = Mathf.RoundToInt(shieldSlider.value);
+			statsDisplay.text = "";
+			statsDisplay.text += "Health: " + player.health + "\n";
+			statsDisplay.text += "Shields: " + shield + "\n";
+			//statsDisplay.text += "Lootboost: " + pot+ "\n";
+			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
+			string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
+			// water
+			statsDisplay.text += "Water: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+		}
 	}
 
 	void updatePointerPosition () {
@@ -123,40 +125,47 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			}
 		}
 
-		graphRect = graphWindow.GetComponent<RectTransform>().rect;
-		maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
-		maxProbability = RNG.getMaximumAbsoluteProbability((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
-		eventCount = RNG.getEventCount((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
-		
-		// dmg
-		for (int x=1; x<=maxDmg; x++) 
+		if (enemies.Count > 0)
 		{
-			if (eventCount[x]>0) 
-			{
-			GameObject bar = (GameObject) Instantiate(barPrefab, Vector3.zero, Quaternion.identity);
-			RectTransform barRect = bar.GetComponent<RectTransform>();
-
-			float height = (float)eventCount[x]/maxProbability;
-			// set anchors to right percentage 
-			barRect.anchorMin = new Vector2 ((x-1)/maxDmg, 0);
-			barRect.anchorMax = new Vector2 ((x)/maxDmg, height);
+			graphRect = graphWindow.GetComponent<RectTransform>().rect;
+			maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
+			maxProbability = RNG.getMaximumAbsoluteProbability((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
+			eventCount = RNG.getEventCount((enemies[0] as Enemy).dice, (enemies[0] as Enemy).sides);
 			
-			// make graphics fit anchors
-			barRect.sizeDelta = Vector2.one;
+			// dmg
+			for (int x=1; x<=maxDmg; x++) 
+			{
+				if (eventCount[x]>0) 
+				{
+				GameObject bar = (GameObject) Instantiate(barPrefab, Vector3.zero, Quaternion.identity);
+				RectTransform barRect = bar.GetComponent<RectTransform>();
 
-			bar.transform.SetParent(graphWindow.transform, false);
-			// transform seems to be in relation to bottom center ...
+				float height = (float)eventCount[x]/maxProbability;
+				// set anchors to right percentage 
+				barRect.anchorMin = new Vector2 ((x-1)/maxDmg, 0);
+				barRect.anchorMax = new Vector2 ((x)/maxDmg, height);
+				
+				// make graphics fit anchors
+				barRect.sizeDelta = Vector2.one;
 
-			// test; lower left corner
-			//barRect.anchorMin = Vector2.zero;
-			//barRect.anchorMax = Vector2.one;
+				bar.transform.SetParent(graphWindow.transform, false);
+				// transform seems to be in relation to bottom center ...
 
-			// GUI.Label (new Rect(graphWindow.x + (x-1)*(graphWindow.width/maxDmg), graphWindow.y + y*(graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), graphWindow.width/maxDmg, graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), ""+(x), style);
-		
+				// test; lower left corner
+				//barRect.anchorMin = Vector2.zero;
+				//barRect.anchorMax = Vector2.one;
+
+				// GUI.Label (new Rect(graphWindow.x + (x-1)*(graphWindow.width/maxDmg), graphWindow.y + y*(graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), graphWindow.width/maxDmg, graphWindow.height/RNG.getMaximumAbsoluteProbability(enemy.dice, enemy.sides)), ""+(x), style);
+			
+				}
 			}
-		}
 
-		updateSliderDimensions ();
+			updateSliderDimensions ();
+		}
+		else {
+			gamestate.fighting = false;
+			gamestate.switchState ();
+		}
 	}
 
 	public void spawnEnemy (int minDice, int maxDice, int minSides, int maxSides, int loot) 
@@ -254,6 +263,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		pointer.enabled = false;
 		// kill enemy
 		enemies.RemoveAt (0);
+		Debug.Log (enemies.Count);
 		rolling = false;
 		if (enemies.Count > 0) 
 		{
@@ -261,6 +271,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 		else
 		{
+			gamestate.fighting = false;
 			gamestate.switchState ();
 		}
 	}

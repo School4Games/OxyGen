@@ -12,32 +12,82 @@ public class GameState : MonoBehaviour
 
 	public GameObject mapUI;
 	public GameObject fightUI;
+	public GameObject dungeonUI;
 
 	public Player player;
 
-	public enum State{Map, Fight, Dungeon};
+	public bool dungeoning;
+	int dungeonFloorsLeft; 
+	public bool fighting;
 
 	void Update () 
 	{
-		// test
-		if (Input.GetKeyDown(KeyCode.M))
-		{
-			switchState ();
-		}
+
 	}
 
+	// somehow counter intuitive flow ...
 	public void chooseEvent (int terrain, int obj)
 	{
 		// is there an object on this tile?
 		if (obj >= 0)
 		{
-
+			DungeonEvent[] dungeonEvents = worldMap.terrains[terrain].dungeonEvents;
+			if (!dungeoning)
+			{
+				if (obj == 2)
+				{
+					// why did i make multiple dungeon events again?
+					dungeonFloorsLeft = dungeonEvents[0].floors;
+					dungeoning = true;
+				}
+			}
+			// dungeon events
+			// called from dungeon state
+			else if (dungeonFloorsLeft > 0)
+			{
+				FightEvent[] dungeonFightEvents = dungeonEvents[0].fightEvents;
+				foreach (FightEvent dungeonFightEvent in dungeonFightEvents) 
+				{
+					for (int i=0; i<=dungeonFightEvent.repetitions; i++)
+					{
+						if (Random.value < dungeonFightEvent.probability)
+						{
+							fightState.spawnEnemy(dungeonFightEvent.minDice, dungeonFightEvent.maxDice, dungeonFightEvent.minSides, dungeonFightEvent.maxSides, dungeonFightEvent.loot);
+							fighting = true;
+						}
+					}
+				}
+				dungeonFloorsLeft--;
+			}
+			// loot
+			else
+			{
+				ResourceEvent[] dungeonResourceEvents = dungeonEvents[0].resourceEvents;
+				foreach (ResourceEvent dungeonResourceEvent in dungeonResourceEvents)
+				{
+					if (Random.value < dungeonResourceEvent.probability)
+					{
+						if (dungeonResourceEvent.type == ResourceEvent.Type.Oxygen) 
+						{
+							player.oxygen += Random.Range (dungeonResourceEvent.minAmount, dungeonResourceEvent.maxAmount+1);
+						}
+						if (dungeonResourceEvent.type == ResourceEvent.Type.Water) 
+						{
+							player.water += Random.Range (dungeonResourceEvent.minAmount, dungeonResourceEvent.maxAmount+1);
+						}
+						if (dungeonResourceEvent.type == ResourceEvent.Type.Scrap) 
+						{
+							player.scrap += Random.Range (dungeonResourceEvent.minAmount, dungeonResourceEvent.maxAmount+1);
+						}
+					}
+				}
+				dungeoning = false;
+			}
 		}
 		else
 		{
 			// fight events
 			FightEvent[] fightEvents = worldMap.terrains[terrain].fightEvents;
-			bool enemySpawned = false;
 			foreach (FightEvent fightEvent in fightEvents) 
 			{
 				for (int i=0; i<=fightEvent.repetitions; i++)
@@ -45,13 +95,9 @@ public class GameState : MonoBehaviour
 					if (Random.value < fightEvent.probability)
 					{
 						fightState.spawnEnemy(fightEvent.minDice, fightEvent.maxDice, fightEvent.minSides, fightEvent.maxSides, fightEvent.loot);
-						enemySpawned = true;
+						fighting = true;
 					}
 				}
-			}
-			if (enemySpawned) 
-			{
-				switchState ();
 			}
 
 			// should pause here according to game design department
@@ -77,31 +123,36 @@ public class GameState : MonoBehaviour
 				}
 			}
 		}
+		switchState ();
 	}
 
 	// called from the currently active state to get to the other one
-	public void switchState (State state)
+	// sort of a state machine now
+	public void switchState ()
 	{
-		if (state = State.Dungeon)
+		if (fighting)
 		{
+			fightUI.SetActive(true);
+			dungeonUI.SetActive (false);
+			mapState.gameObject.SetActive(false);
+			fightState.gameObject.SetActive(true);
+			dungeonState.gameObject.SetActive (false);
+		}
+		else if (dungeoning)
+		{
+			dungeonUI.SetActive (true);
+			fightUI.SetActive(false);
 			mapState.gameObject.SetActive(false);
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (true);
 		}
-		if (state = State.Fight)
+		else
 		{
-			mapState.gameObject.SetActive(false);
+			fightUI.SetActive(false);
+			dungeonUI.SetActive (false);
+			mapState.gameObject.SetActive(true);
 			fightState.gameObject.SetActive(false);
-			dungeonState.gameObject.SetActive (true);
+			dungeonState.gameObject.SetActive (false);
 		}
-		if (state = State.Map)
-		{
-			mapState.gameObject.SetActive(false);
-			fightState.gameObject.SetActive(false);
-			dungeonState.gameObject.SetActive (true);
-		}
-		mapState.gameObject.SetActive(!mapState.gameObject.activeSelf);
-		fightUI.gameObject.SetActive(!fightState.gameObject.activeSelf);
-		fightState.gameObject.SetActive(!fightState.gameObject.activeSelf);
 	}
 }

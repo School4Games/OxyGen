@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class MapState : MonoBehaviour 
 {
-
 	public WorldMap map;
 
 	public GameState gamestate;

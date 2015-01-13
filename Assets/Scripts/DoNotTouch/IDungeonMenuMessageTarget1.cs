@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 
-public interface IDuneonMenuMessageTarget : IEventSystemHandler
+public interface IDungeonMenuMessageTarget : IEventSystemHandler
 {
 	// functions that can be called via the messaging system
 	void OnLeave();
