@@ -7,7 +7,7 @@ public class DungeonState : MonoBehaviour, IDungeonMenuMessageTarget
 
 	public void OnLeave ()
 	{
-		gamestate.dungeoning = false;
+		gamestate.dungeoneering = false;
 		gamestate.switchState ();
 	}
 
