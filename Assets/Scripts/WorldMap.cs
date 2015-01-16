@@ -136,7 +136,7 @@ public class WorldMap : MonoBehaviour {
 			main = (Texture2D)renderer.sharedMaterial.mainTexture;
 		}
 		// test (savegames)
-		Random.seed = 50;
+		//Random.seed = 216389;
 		clearTexture ();
 		placeTiles ();
 		clearObjects ();
@@ -191,7 +191,9 @@ public class WorldMap : MonoBehaviour {
 				}
 			}
 		}
-		objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
+		objects[8, 8] = 0;
+		// random
+		//objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
 
 		// place
 		objectContainer = new GameObject ();

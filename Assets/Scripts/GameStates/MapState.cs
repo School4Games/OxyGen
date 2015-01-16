@@ -50,8 +50,8 @@ public class MapState : MonoBehaviour
 				if (map.isNeighbour(player.position, tileNr)) 
 				{
 					player.goToTile (tileNr, map);
-					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 					player.consumeResources ();
+					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 				}
 			}
 		}

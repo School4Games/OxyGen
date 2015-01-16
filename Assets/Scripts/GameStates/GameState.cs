@@ -43,6 +43,18 @@ public class GameState : MonoBehaviour
 			DungeonEvent[] dungeonEvents = worldMap.terrains[terrain].dungeonEvents;
 			if (!dungeoneering)
 			{
+				// base
+				if (obj == 0)
+				{
+					// test
+					player.oxygen = 10;
+				}
+				// outpost
+				if (obj == 1)
+				{
+					// test
+					player.oxygen = 10;
+				}
 				// dungeons
 				if (obj == 2)
 				{
