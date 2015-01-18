@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameState : MonoBehaviour 
 {
@@ -60,6 +61,7 @@ public class GameState : MonoBehaviour
 				{
 					// why did i make multiple dungeon events again?
 					dungeonFloorsLeft = dungeonEvents[0].floors;
+					dungeonUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
 					dungeoneering = true;
 				}
 				// spaceship parts
