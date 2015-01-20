@@ -19,6 +19,7 @@ public class GameState : MonoBehaviour
 	public GameObject dungeonUI;
 	public GameObject lootUI;
 	public GameObject loseUI;
+	public Text loseText;
 	public GameObject winUI;
 
 	public Player player;
@@ -195,6 +196,8 @@ public class GameState : MonoBehaviour
 		else if (player.oxygen <= 0)
 		{
 			loseUI.SetActive(true);
+			loseText.text = "You suffocated.\nPress R to restart";
+			loseState.gameObject.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
@@ -206,6 +209,8 @@ public class GameState : MonoBehaviour
 		else if (player.water <= 0)
 		{
 			loseUI.SetActive(true);
+			loseText.text = "You dehydrated.\nPress R to restart";
+			loseState.gameObject.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
@@ -217,6 +222,8 @@ public class GameState : MonoBehaviour
 		else if (player.health <= 0)
 		{
 			loseUI.SetActive(true);
+			loseText.text = "You died.\nPress R to restart";
+			loseState.gameObject.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
