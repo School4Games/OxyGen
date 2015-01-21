@@ -10,12 +10,6 @@ public class MapState : MonoBehaviour
 
 	public Player player;
 
-	public Text water;
-
-	public Text oxygen;
-
-	public Text health;
-
 	void Start ()
 	{
 		Vector2 basePosition = Vector2.zero;
@@ -34,8 +28,6 @@ public class MapState : MonoBehaviour
 
 	void Update ()
 	{
-		updateStatsDisplay ();
-
 		RaycastHit hitInfo;
 		if (Input.GetButtonDown ("Fire1"))
 		{
@@ -55,12 +47,5 @@ public class MapState : MonoBehaviour
 				}
 			}
 		}
-	}
-
-	void updateStatsDisplay ()
-	{
-		water.text = " h2o: " + player.water; 
-		oxygen.text = " o2: " + player.oxygen;
-		health.text = " hp: " + player.health;
 	}
 }

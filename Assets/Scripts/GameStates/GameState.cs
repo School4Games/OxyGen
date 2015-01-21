@@ -14,7 +14,6 @@ public class GameState : MonoBehaviour
 
 	public WorldMap worldMap;
 
-	public GameObject mapUI;
 	public GameObject fightUI;
 	public GameObject dungeonUI;
 	public GameObject lootUI;
@@ -49,13 +48,13 @@ public class GameState : MonoBehaviour
 				if (obj == 0)
 				{
 					// test
-					player.oxygen = 10;
+					player.oxygen.amount = 10;
 				}
 				// outpost
 				if (obj == 1)
 				{
 					// test
-					player.oxygen = 10;
+					player.oxygen.amount = 10;
 				}
 				// dungeons
 				if (obj == 2)
@@ -68,7 +67,7 @@ public class GameState : MonoBehaviour
 				// spaceship parts
 				if (obj == 3)
 				{
-					player.parts++;
+					player.parts.amount++;
 					// note to self: don't ever use vectors as int storage again
 					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
 					// make parts diappear visually?
@@ -103,15 +102,15 @@ public class GameState : MonoBehaviour
 					{
 						if (dungeonResourceEvent.type == ResourceEvent.Type.Oxygen) 
 						{
-							player.oxygen += amount;
+							player.oxygen.amount += amount;
 						}
 						if (dungeonResourceEvent.type == ResourceEvent.Type.Water) 
 						{
-							player.water += amount;
+							player.water.amount += amount;
 						}
 						if (dungeonResourceEvent.type == ResourceEvent.Type.Scrap) 
 						{
-							player.scrap += amount;
+							player.scrap.amount += amount;
 						}
 						lootState.setLootText (amount, dungeonResourceEvent.type);
 					}
@@ -149,15 +148,15 @@ public class GameState : MonoBehaviour
 				{
 					if (resourceEvent.type == ResourceEvent.Type.Oxygen) 
 					{
-						player.oxygen += amount;
+						player.oxygen.amount += amount;
 					}
 					if (resourceEvent.type == ResourceEvent.Type.Water) 
 					{
-						player.water += amount;
+						player.water.amount += amount;
 					}
 					if (resourceEvent.type == ResourceEvent.Type.Scrap) 
 					{
-						player.scrap += amount;
+						player.scrap.amount += amount;
 					}
 				}
 			}
@@ -180,7 +179,7 @@ public class GameState : MonoBehaviour
 	public void switchState ()
 	{
 		// public var somwhere would be nice
-		if (player.parts >= 4)
+		if (player.parts.amount >= 4)
 		{
 			winUI.SetActive(true);
 			loseUI.SetActive(false);
@@ -193,7 +192,7 @@ public class GameState : MonoBehaviour
 			dungeonState.gameObject.SetActive (false);
 		}
 		// deaths
-		else if (player.oxygen <= 0)
+		else if (player.oxygen.amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You suffocated.\nPress R to restart";
@@ -206,7 +205,7 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
-		else if (player.water <= 0)
+		else if (player.water.amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You dehydrated.\nPress R to restart";
@@ -219,7 +218,7 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
-		else if (player.health <= 0)
+		else if (player.health.amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You died.\nPress R to restart";

@@ -186,6 +186,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	IEnumerator roll () 
 	{
+		shieldSlider.interactable = false;
 		rolling = true;
 		int maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
 		// do roll
@@ -237,20 +238,21 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			updatePointerPosition ();
 			pointer.enabled = true;
 		}
+		shieldSlider.interactable = true;
 		yield return new WaitForSeconds (1.0f);
 		// confiscate stakes
-		player.water -= shield;
-		player.water -= pot;
+		player.water.amount -= shield;
+		player.water.amount -= pot;
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
-			player.health -= 1;
+			player.health.amount -= 1;
 		}
 		// otherwise give loot
 		else 
 		{
-			player.water += pot*2;
-			player.water += (enemies[0] as Enemy).loot;
+			player.water.amount += pot*2;
+			player.water.amount += (enemies[0] as Enemy).loot;
 		}
 		// reset shield and pot (and rolling)
 		shieldSlider.value = 0;
