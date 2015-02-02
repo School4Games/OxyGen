@@ -11,6 +11,7 @@ public class GameState : MonoBehaviour
 	public LootState lootState;
 	public LoseState loseState;
 	public WinState winState;
+	public InventoryDisplay inventoryDisplay;
 
 	public WorldMap worldMap;
 
@@ -20,6 +21,7 @@ public class GameState : MonoBehaviour
 	public GameObject loseUI;
 	public Text loseText;
 	public GameObject winUI;
+	public GameObject inventoryUI;
 
 	public Player player;
 
@@ -162,6 +164,7 @@ public class GameState : MonoBehaviour
 			}
 		}
 		switchState ();
+		inventoryDisplay.update ();
 	}
 
 	void spawnParticles (int amount)
@@ -233,6 +236,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (fighting)
 		{
+			inventoryUI.SetActive (false);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(true);
 			dungeonUI.SetActive(false);
@@ -243,6 +247,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (dungeoneering)
 		{
+			inventoryUI.SetActive (false);
 			lootState.gameObject.SetActive(false);
 			dungeonUI.SetActive(true);
 			fightUI.SetActive(false);

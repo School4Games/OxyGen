@@ -18,8 +18,13 @@ public class InventoryDisplay : MonoBehaviour {
 		updateSlotContent ();
 	}
 
-	// Update is called once per frame
-	public void updateSlotNumber () {
+	public void update ()
+	{
+		updateSlotNumber ();
+		updateSlotContent ();
+	}
+
+	void updateSlotNumber () {
 		while (slots.Count < player.inventorySlots)
 		{
 			GameObject newSlot = (GameObject) Instantiate (slotPrefab);
@@ -58,14 +63,6 @@ public class InventoryDisplay : MonoBehaviour {
 		{
 			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("water", (float)Mathf.Min(water, player.water.stackSize)/(float)player.water.stackSize, player.water.color);
 			water -= player.water.stackSize;
-			currentSlot++;
-		}
-
-		int oxygen = player.oxygen.amount;
-		while (oxygen > 0)
-		{
-			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("oxygen", (float)Mathf.Min(oxygen, player.oxygen.stackSize)/(float)player.oxygen.stackSize, player.oxygen.color);
-			oxygen -= player.oxygen.stackSize;
 			currentSlot++;
 		}
 
