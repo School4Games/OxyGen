@@ -55,13 +55,17 @@ public class InventoryDisplay : MonoBehaviour {
 
 	void updateSlotContent ()
 	{
+		foreach (GameObject slot in slots)
+		{
+			slot.GetComponent<Slot>().update("-", 1, Color.gray);
+		}
 		int currentSlot = 0;
 
 		// >_<
 		int water = player.water.amount;
 		while (water > 0)
 		{
-			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("water", (float)Mathf.Min(water, player.water.stackSize)/(float)player.water.stackSize, player.water.color);
+			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("H2O", (float)Mathf.Min(water, player.water.stackSize)/(float)player.water.stackSize, player.water.color);
 			water -= player.water.stackSize;
 			currentSlot++;
 		}
@@ -69,7 +73,7 @@ public class InventoryDisplay : MonoBehaviour {
 		int oxygen = player.oxygen.amount;
 		while (oxygen > 0)
 		{
-			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("oxygen", (float)Mathf.Min(oxygen, player.oxygen.stackSize)/(float)player.oxygen.stackSize, player.oxygen.color);
+			(slots[currentSlot] as GameObject).GetComponent<Slot>().update("O2", (float)Mathf.Min(oxygen, player.oxygen.stackSize)/(float)player.oxygen.stackSize, player.oxygen.color);
 			oxygen -= player.oxygen.stackSize;
 			currentSlot++;
 		}

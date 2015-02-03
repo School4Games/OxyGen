@@ -258,6 +258,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (looting)
 		{
+			inventoryUI.SetActive (true);
 			lootState.gameObject.SetActive(true);
 			lootUI.SetActive(true);
 			dungeonUI.SetActive(false);
@@ -268,6 +269,7 @@ public class GameState : MonoBehaviour
 		}
 		else
 		{
+			inventoryUI.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
