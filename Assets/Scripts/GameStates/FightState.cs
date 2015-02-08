@@ -92,13 +92,13 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		{
 			shield = Mathf.RoundToInt(shieldSlider.value);
 			statsDisplay.text = "";
-			statsDisplay.text += "Health: " + player.health + "\n";
+			statsDisplay.text += "Health: " + player.inventory.resources[(int)Resource.Type.Health].amount + "\n";
 			statsDisplay.text += "Shields: " + shield + "\n";
 			//statsDisplay.text += "Lootboost: " + pot+ "\n";
 			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
 			string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
 			// water
-			statsDisplay.text += "Water: " + (player.water /*- shield - pot*/) + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+			statsDisplay.text += player.inventory.resources[(int)Resource.Type.Water] + " (" + winLoot + "/" + looseLoot + ")" + "\n";
 		}
 	}
 
@@ -241,18 +241,18 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		shieldSlider.interactable = true;
 		yield return new WaitForSeconds (1.0f);
 		// confiscate stakes
-		player.water.amount -= shield;
-		player.water.amount -= pot;
+		player.inventory.resources[(int)Resource.Type.Water].amount -= shield;
+		player.inventory.resources[(int)Resource.Type.Water].amount -= pot;
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
-			player.health.amount -= 1;
+			player.inventory.resources[(int)Resource.Type.Health].amount -= 1;
 		}
 		// otherwise give loot
 		else 
 		{
-			player.water.amount += pot*2;
-			player.water.amount += (enemies[0] as Enemy).loot;
+			player.inventory.resources[(int)Resource.Type.Water].amount += pot*2;
+			player.inventory.resources[(int)Resource.Type.Water].amount += (enemies[0] as Enemy).loot;
 		}
 		// reset shield and pot (and rolling)
 		shieldSlider.value = 0;

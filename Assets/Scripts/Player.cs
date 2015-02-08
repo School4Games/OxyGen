@@ -8,18 +8,7 @@ public class Player : MonoBehaviour
 
 	public int inventorySlots = 5;
 
-	// make resource class?
-	public Resource water;
-
-	public Resource oxygen;
-
-	public Resource scrap;
-
-	public Resource parts;
-
-	public Resource health;
-
-	public InventoryDisplay inventoryDisplay;
+	public Inventory inventory;
 
 	void Start ()
 	{
@@ -39,30 +28,13 @@ public class Player : MonoBehaviour
 
 	public void consumeResources ()
 	{
-		water.amount--;
-		oxygen.amount--;
+		inventory.resources[(int)Resource.Type.Water].amount--;
+		inventory.resources[(int)Resource.Type.Oxygen].amount--;
 	}
 
-	public void addResource (Resource resource, int amount)
+	public void addResource (Resource.Type type, int amount)
 	{
-		// add
-		resource.amount += amount;
-		
-		int occupiedSlots = 0;
-		occupiedSlots += Mathf.CeilToInt ((float)water.amount / (float)water.stackSize);
-		occupiedSlots += Mathf.CeilToInt ((float)oxygen.amount / (float)oxygen.stackSize);
-		occupiedSlots += Mathf.CeilToInt ((float)scrap.amount / (float)scrap.stackSize);
-		occupiedSlots += Mathf.CeilToInt ((float)parts.amount / (float)parts.stackSize);
-		occupiedSlots += Mathf.CeilToInt ((float)health.amount / (float)health.stackSize);
-
-		// throw out resources that don't fit in inventory
-		while (occupiedSlots > inventorySlots)
-		{
-			// lazy
-			resource.amount--;
-		}
-
-		// update display
+		inventory.addResource(type, amount);
 	}
 }
 
