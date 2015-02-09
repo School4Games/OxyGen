@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 [System.Serializable]
-public class Resource {
+public class Resource
+{
 
 	[HideInInspector]
 	public string name;

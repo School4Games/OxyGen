@@ -2,21 +2,57 @@
 using System.Collections;
 using System;
 
-public class Inventory : MonoBehaviour 
+public class Inventory : MonoBehaviour
 {
 	// always in sync with existing resources
 	public Resource[] resources = new Resource[5];
 
 	public GameObject slotPrefab;
 
+	public int slotNumber = 5;
+
 	Slot[] slots = new Slot[5];
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
 	{
-		updateSlotNumber (slots.Length);
-		updateSlotSizes ();
+		updateSlotNumber (slotNumber);
 		updateSlotVisuals ();
+	}
+
+	public void OnClickSlot ()
+	{
+		// start dragging
+		if (GameState.draggedResource == null)
+		{
+			pickUp ();
+		}
+		// drop
+		else 
+		{
+			drop ();
+		}
+	}
+
+	public void pickUp ()
+	{
+
+	}
+
+	public void drop ()
+	{
+		// unsafe. destroys resources, when they don't fit.
+		addResource (GameState.draggedResource.type, GameState.draggedResource.amount);
+		GameState.draggedResource = null;
+	}
+
+	// >_<
+	public Slot[] zloty 
+	{
+		get 
+		{
+			return slots;
+		}
 	}
 
 	public void addResource (Resource.Type type, int amount)
@@ -57,7 +93,7 @@ public class Inventory : MonoBehaviour
 				slots[i] = newSlot.GetComponent<Slot>();
 			}
 		}
-		updateSlotSizes();
+		slotNumber = slots.Length;
 	}
 
 	public void updateSlotVisuals ()
@@ -65,6 +101,11 @@ public class Inventory : MonoBehaviour
 		int currentResourceIndex = 0;
 		// amount left to put into slots
 		int amount = resources[currentResourceIndex].amount;
+		// hmmm ...
+		if (slots[0] == null)
+		{
+			updateSlotNumber(slots.Length);
+		}
 		foreach (Slot slot in slots)
 		{
 			while (amount <= 0)
@@ -79,28 +120,23 @@ public class Inventory : MonoBehaviour
 			if (currentResourceIndex < resources.Length)
 			{
 				int stackSize = resources[currentResourceIndex].stackSize;
-				Color color = resources[currentResourceIndex].color;
-				slot.update(resources[currentResourceIndex].ToString() + "\n" + Mathf.Min(amount, stackSize), (float)Mathf.Min(amount, stackSize)/(float)stackSize, color);
+
+				// is there a better way to do this?
+				Resource resource = new Resource();
+				resource.amount = amount;
+				resource.color = resources[currentResourceIndex].color;
+				resource.stackSize = resources[currentResourceIndex].stackSize;
+				resource.type = resources[currentResourceIndex].type;
+				resource.amount = Mathf.Min (resource.amount, stackSize);
+
+				slot.update(resource);
 				amount -= stackSize;
 			}
 			// empty slot
 			else
 			{
-				slot.GetComponent<Slot>().update("-", 1, Color.gray);
+				slot.GetComponent<Slot>().update(new Resource());
 			}
-		}
-	}
-
-	void updateSlotSizes ()
-	{
-		for (int i=0; i<slots.Length; i++)
-		{
-			// set anchors to right percentage
-			RectTransform newSlotRect = slots[i].gameObject.GetComponent<RectTransform>();
-			newSlotRect.anchorMin = new Vector2 ((float)i/(float)slots.Length, 0);
-			newSlotRect.anchorMax = new Vector2 (((float)i+1)/(float)slots.Length, 1);
-			// make graphics fit anchors
-			newSlotRect.sizeDelta = Vector2.one;
 		}
 	}
 }

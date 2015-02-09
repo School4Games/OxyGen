@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class GameState : MonoBehaviour 
 {
+	// hmmm ...
+	public static Resource draggedResource;
 
 	public MapState mapState;
 	public FightState fightState;
@@ -11,6 +13,7 @@ public class GameState : MonoBehaviour
 	public LootState lootState;
 	public LoseState loseState;
 	public WinState winState;
+	public OutpostState outpostState;
 
 	public WorldMap worldMap;
 
@@ -21,12 +24,14 @@ public class GameState : MonoBehaviour
 	public Text loseText;
 	public GameObject winUI;
 	public GameObject inventoryUI;
+	public GameObject outpostUI;
 
 	public Player player;
 
 	public GameObject particlePrefab;
 
 	public bool dungeoneering;
+	public bool outposting;
 	int dungeonFloorsLeft; 
 	public bool fighting;
 	public bool looting;
@@ -56,6 +61,8 @@ public class GameState : MonoBehaviour
 				{
 					// test
 					player.inventory.resources[(int)Resource.Type.Oxygen].amount = 10;
+
+					outposting = true;
 				}
 				// dungeons
 				if (obj == 2)
@@ -101,23 +108,10 @@ public class GameState : MonoBehaviour
 					int amount = Random.Range (dungeonResourceEvent.minAmount, dungeonResourceEvent.maxAmount+1);
 					if (Random.value < dungeonResourceEvent.probability)
 					{
-						if (dungeonResourceEvent.type == ResourceEvent.Type.Oxygen) 
-						{
-							player.inventory.resources[(int)Resource.Type.Oxygen].amount += amount;
-						}
-						if (dungeonResourceEvent.type == ResourceEvent.Type.Water) 
-						{
-							player.inventory.resources[(int)Resource.Type.Water].amount += amount;
-						}
-						if (dungeonResourceEvent.type == ResourceEvent.Type.Scrap) 
-						{
-							player.inventory.resources[(int)Resource.Type.Scrap].amount += amount;
-						}
-						lootState.setLootText (amount, dungeonResourceEvent.type);
+						lootState.lootInventory.addResource (dungeonResourceEvent.type, amount);
 					}
 				}
 				dungeoneering = false;
-				// active looting?
 				looting = true;
 			}
 		}
@@ -147,15 +141,15 @@ public class GameState : MonoBehaviour
 				spawnParticles (amount);
 				if (Random.value < resourceEvent.probability)
 				{
-					if (resourceEvent.type == ResourceEvent.Type.Oxygen) 
+					if (resourceEvent.type == Resource.Type.Oxygen) 
 					{
 						player.inventory.resources[(int)Resource.Type.Oxygen].amount += amount;
 					}
-					if (resourceEvent.type == ResourceEvent.Type.Water) 
+					if (resourceEvent.type == Resource.Type.Water) 
 					{
 						player.inventory.resources[(int)Resource.Type.Water].amount += amount;
 					}
-					if (resourceEvent.type == ResourceEvent.Type.Scrap) 
+					if (resourceEvent.type == Resource.Type.Scrap) 
 					{
 						player.inventory.resources[(int)Resource.Type.Scrap].amount += amount;
 					}
@@ -181,7 +175,7 @@ public class GameState : MonoBehaviour
 	public void switchState ()
 	{
 		// public var somwhere would be nice
-		if (player.inventory.resources[(int)Resource.Type.Scrap].amount >= 4)
+		if (player.inventory.resources[(int)Resource.Type.Part].amount >= 4)
 		{
 			winUI.SetActive(true);
 			loseUI.SetActive(false);
@@ -235,6 +229,8 @@ public class GameState : MonoBehaviour
 		}
 		else if (fighting)
 		{
+			outpostState.gameObject.SetActive(false);
+			outpostUI.SetActive(false);
 			inventoryUI.SetActive (false);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(true);
@@ -246,6 +242,8 @@ public class GameState : MonoBehaviour
 		}
 		else if (dungeoneering)
 		{
+			outpostState.gameObject.SetActive(false);
+			outpostUI.SetActive(false);
 			inventoryUI.SetActive (false);
 			lootState.gameObject.SetActive(false);
 			dungeonUI.SetActive(true);
@@ -255,8 +253,23 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (true);
 		}
+		else if (outposting)
+		{
+			outpostState.gameObject.SetActive(true);
+			outpostUI.SetActive(true);
+			inventoryUI.SetActive (true);
+			lootState.gameObject.SetActive(false);
+			dungeonUI.SetActive(false);
+			fightUI.SetActive(false);
+			lootUI.SetActive(false);
+			mapState.gameObject.SetActive(false);
+			fightState.gameObject.SetActive(false);
+			dungeonState.gameObject.SetActive (false);
+		}
 		else if (looting)
 		{
+			outpostState.gameObject.SetActive(false);
+			outpostUI.SetActive(false);
 			inventoryUI.SetActive (true);
 			lootState.gameObject.SetActive(true);
 			lootUI.SetActive(true);
@@ -268,6 +281,8 @@ public class GameState : MonoBehaviour
 		}
 		else
 		{
+			outpostState.gameObject.SetActive(false);
+			outpostUI.SetActive(false);
 			inventoryUI.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);

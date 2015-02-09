@@ -2,15 +2,21 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class LootState : MonoBehaviour, ILootMenuMessageTarget {
+public class LootState : MonoBehaviour, ILootMenuMessageTarget
+{
 
 	public GameState gamestate;
 
-	public Text lootText;
+	public Inventory lootInventory;
 
-	public void setLootText (int amount, ResourceEvent.Type type)
+	void Awake ()
 	{
-		lootText.text = "You got " + amount + " " + type.ToString ();
+	
+	}
+
+	public void setLootText (int amount, Resource.Type type)
+	{
+		lootInventory.addResource(type, amount);
 	}
 	
 	public void OnLeave ()
