@@ -23,5 +23,10 @@ public class OutpostState : MonoBehaviour, IOutpostMenuMessageTarget {
 		gamestate.switchState ();
 	}
 
+	public void OnOxygenRefill ()
+	{
+		gamestate.player.inventory.addResource(Resource.Type.Oxygen, 1);
+	}
+
 	#endregion
 }

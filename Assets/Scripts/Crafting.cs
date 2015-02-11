@@ -31,7 +31,7 @@ public class Crafting : MonoBehaviour, ICraftingMenuMessageTarget {
 	public void OnCraftInventorySlot ()
 	{
 		player.inventory.updateSlotNumber(player.inventory.slotNumber+1);
-		player.inventory.addResource(Resource.Type.Scrap, -5);
+		player.inventory.addResource(Resource.Type.Scrap, -10);
 	}
 
 	public void OnCraftVisionUpgrade ()

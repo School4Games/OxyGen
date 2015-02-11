@@ -28,13 +28,8 @@ public class Player : MonoBehaviour
 
 	public void consumeResources ()
 	{
-		inventory.resources[(int)Resource.Type.Water].amount--;
-		inventory.resources[(int)Resource.Type.Oxygen].amount--;
-	}
-
-	public void addResource (Resource.Type type, int amount)
-	{
-		inventory.addResource(type, amount);
+		inventory.addResource (Resource.Type.Water, -1);
+		inventory.addResource (Resource.Type.Oxygen, -1);
 	}
 }
 

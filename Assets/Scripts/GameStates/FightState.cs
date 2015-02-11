@@ -92,13 +92,13 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		{
 			shield = Mathf.RoundToInt(shieldSlider.value);
 			statsDisplay.text = "";
-			statsDisplay.text += "Health: " + player.inventory.resources[(int)Resource.Type.Health].amount + "\n";
+			statsDisplay.text += "Health: " + player.inventory.getResources()[(int)Resource.Type.Health].amount + "\n";
 			statsDisplay.text += "Shields: " + shield + "\n";
 			//statsDisplay.text += "Lootboost: " + pot+ "\n";
 			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
 			string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
 			// water
-			statsDisplay.text += player.inventory.resources[(int)Resource.Type.Water] + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + " (" + winLoot + "/" + looseLoot + ")" + "\n";
 		}
 	}
 
@@ -241,18 +241,16 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		shieldSlider.interactable = true;
 		yield return new WaitForSeconds (1.0f);
 		// confiscate stakes
-		player.inventory.resources[(int)Resource.Type.Water].amount -= shield;
-		player.inventory.resources[(int)Resource.Type.Water].amount -= pot;
+		player.inventory.addResource(Resource.Type.Water, -(pot + shield));
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
-			player.inventory.resources[(int)Resource.Type.Health].amount -= 1;
+			player.inventory.addResource(Resource.Type.Health, -1);
 		}
 		// otherwise give loot
 		else 
 		{
-			player.inventory.resources[(int)Resource.Type.Water].amount += pot*2;
-			player.inventory.resources[(int)Resource.Type.Water].amount += (enemies[0] as Enemy).loot;
+			player.inventory.addResource(Resource.Type.Water, pot*2 + (enemies[0] as Enemy).loot);
 		}
 		// reset shield and pot (and rolling)
 		shieldSlider.value = 0;
@@ -265,7 +263,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		pointer.enabled = false;
 		// kill enemy
 		enemies.RemoveAt (0);
-		Debug.Log (enemies.Count);
 		rolling = false;
 		if (enemies.Count > 0) 
 		{

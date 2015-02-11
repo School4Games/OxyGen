@@ -14,7 +14,7 @@ public class ButtonDisabler : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (player.inventory.resources [(int)Resource.Type.Scrap].amount < scrapCost) 
+		if (player.inventory.getResources() [(int)Resource.Type.Scrap].amount < scrapCost) 
 		{
 			GetComponent<Button> ().interactable = false;
 		} 

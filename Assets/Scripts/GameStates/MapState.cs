@@ -6,6 +6,8 @@ public class MapState : MonoBehaviour
 {
 	public WorldMap map;
 
+	public FogOfWar fogOfWar;
+
 	public GameState gamestate;
 
 	public Player player;
@@ -42,6 +44,7 @@ public class MapState : MonoBehaviour
 				if (map.isNeighbour(player.position, tileNr)) 
 				{
 					player.goToTile (tileNr, map);
+					fogOfWar.paint((int)player.position.x, (int)player.position.y);
 					player.consumeResources ();
 					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 				}

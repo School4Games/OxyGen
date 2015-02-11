@@ -8,4 +8,5 @@ public interface IOutpostMenuMessageTarget : IEventSystemHandler
 {
 	// functions that can be called via the messaging system
 	void OnLeave();
+	void OnOxygenRefill();
 }

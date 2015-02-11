@@ -18,6 +18,7 @@ public class GameState : MonoBehaviour
 	public WorldMap worldMap;
 
 	public GameObject fightUI;
+	public Image enemyGraphics;
 	public GameObject dungeonUI;
 	public GameObject lootUI;
 	public GameObject loseUI;
@@ -53,15 +54,11 @@ public class GameState : MonoBehaviour
 				// base
 				if (obj == 0)
 				{
-					// test
-					player.inventory.resources[(int)Resource.Type.Oxygen].amount = 10;
+
 				}
 				// outpost
 				if (obj == 1)
 				{
-					// test
-					player.inventory.resources[(int)Resource.Type.Oxygen].amount = 10;
-
 					outposting = true;
 				}
 				// dungeons
@@ -75,7 +72,7 @@ public class GameState : MonoBehaviour
 				// spaceship parts
 				if (obj == 3)
 				{
-					player.inventory.resources[(int)Resource.Type.Part].amount++;
+					player.inventory.addResource (Resource.Type.Part, 1);
 					// note to self: don't ever use vectors as int storage again
 					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
 					// make parts diappear visually?
@@ -92,6 +89,8 @@ public class GameState : MonoBehaviour
 					{
 						if (Random.value < dungeonFightEvent.probability)
 						{
+							fightUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
+							enemyGraphics.overrideSprite = worldMap.terrains[terrain].dungeonEnemy;
 							fightState.spawnEnemy(dungeonFightEvent.minDice, dungeonFightEvent.maxDice, dungeonFightEvent.minSides, dungeonFightEvent.maxSides, dungeonFightEvent.loot);
 							fighting = true;
 						}
@@ -125,6 +124,8 @@ public class GameState : MonoBehaviour
 				{
 					if (Random.value < fightEvent.probability)
 					{
+						fightUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].outdoorScreen;
+						enemyGraphics.overrideSprite = worldMap.terrains[terrain].outdoorEnemy;
 						fightState.spawnEnemy(fightEvent.minDice, fightEvent.maxDice, fightEvent.minSides, fightEvent.maxSides, fightEvent.loot);
 						fighting = true;
 					}
@@ -141,18 +142,7 @@ public class GameState : MonoBehaviour
 				spawnParticles (amount);
 				if (Random.value < resourceEvent.probability)
 				{
-					if (resourceEvent.type == Resource.Type.Oxygen) 
-					{
-						player.inventory.resources[(int)Resource.Type.Oxygen].amount += amount;
-					}
-					if (resourceEvent.type == Resource.Type.Water) 
-					{
-						player.inventory.resources[(int)Resource.Type.Water].amount += amount;
-					}
-					if (resourceEvent.type == Resource.Type.Scrap) 
-					{
-						player.inventory.resources[(int)Resource.Type.Scrap].amount += amount;
-					}
+					player.inventory.addResource (resourceEvent.type, amount);
 				}
 			}
 		}
@@ -175,7 +165,7 @@ public class GameState : MonoBehaviour
 	public void switchState ()
 	{
 		// public var somwhere would be nice
-		if (player.inventory.resources[(int)Resource.Type.Part].amount >= 4)
+		if (player.inventory.getResources()[(int)Resource.Type.Part].amount >= 4)
 		{
 			winUI.SetActive(true);
 			loseUI.SetActive(false);
@@ -188,7 +178,7 @@ public class GameState : MonoBehaviour
 			dungeonState.gameObject.SetActive (false);
 		}
 		// deaths
-		else if (player.inventory.resources[(int)Resource.Type.Oxygen].amount <= 0)
+		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You suffocated.\nPress R to restart";
@@ -201,7 +191,7 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
-		else if (player.inventory.resources[(int)Resource.Type.Water].amount <= 0)
+		else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You dehydrated.\nPress R to restart";
@@ -214,7 +204,7 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
-		else if (player.inventory.resources[(int)Resource.Type.Health].amount <= 0)
+		else if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You died.\nPress R to restart";

@@ -71,6 +71,7 @@ public class Inventory : MonoBehaviour
 		{
 			// lazy
 			resources[(int)type].amount--;
+			occupiedSlots = 0;
 			foreach (Resource resource in resources)
 			{
 				occupiedSlots += Mathf.CeilToInt ((float)resource.amount / (float)resource.stackSize);
@@ -138,5 +139,11 @@ public class Inventory : MonoBehaviour
 				slot.GetComponent<Slot>().update(new Resource());
 			}
 		}
+	}
+
+	// convention for getters ...
+	public Resource[] getResources ()
+	{
+		return resources;
 	}
 }
