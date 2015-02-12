@@ -11,6 +11,8 @@ public class WorldMap : MonoBehaviour {
 	public Terrain[] terrains;
 
 	public GameObject[] objectPrefabs = new GameObject[4];
+
+	public ShaderFogOfWar fogOfWar;
 		
 	public Texture2D stamp;
 	public int hexSideLength = 64;
@@ -141,9 +143,23 @@ public class WorldMap : MonoBehaviour {
 		placeTiles ();
 		clearObjects ();
 		placeObjects ();
+		createFogOfWar ();
 
 		generated = true;
 
+	}
+
+	void createFogOfWar ()
+	{
+		Vector2[,] tilepositions = new Vector2[tiles.GetUpperBound(0),tiles.GetUpperBound(1)];
+		for (int y=0; y<tiles.GetUpperBound(1); y++)
+		{
+			for (int x=0; x<tiles.GetUpperBound(0); x++)
+			{
+				tilepositions[x,y] = tileToWorldPoint (new Vector2 (x, y));
+			}
+		}
+		fogOfWar.createFogMesh (tilepositions);
 	}
 
 	void placeTiles ()

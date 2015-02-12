@@ -6,7 +6,7 @@ public class MapState : MonoBehaviour
 {
 	public WorldMap map;
 
-	public FogOfWar fogOfWar;
+	public ShaderFogOfWar fogOfWar;
 
 	public GameState gamestate;
 
@@ -26,6 +26,7 @@ public class MapState : MonoBehaviour
 			}
 		}
 		player.goToTile (basePosition, map);
+		updateFogOfWar ();
 	}
 
 	void Update ()
@@ -44,11 +45,33 @@ public class MapState : MonoBehaviour
 				if (map.isNeighbour(player.position, tileNr)) 
 				{
 					player.goToTile (tileNr, map);
-					fogOfWar.paint((int)player.position.x, (int)player.position.y);
+					updateFogOfWar ();
 					player.consumeResources ();
-					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
+					//gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 				}
 			}
+		}
+	}
+
+	void updateFogOfWar ()
+	{
+		// make getNeighbors() in Worldmap?
+		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y);
+		fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y);
+		fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y);
+		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y+1);
+		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y-1);
+		// even
+		if (player.position.x % 2 == 0)
+		{
+			fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y-1);
+			fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y-1);
+		}
+		// odd
+		else 
+		{
+			fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y+1);
+			fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y+1);
 		}
 	}
 }
