@@ -19,6 +19,7 @@ public class FogOfWar : MonoBehaviour {
 	void Start ()
 	{
 		main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		clearTexture ();
 
 		// test 
 		paint ((int)player.position.x, (int)player.position.y);
@@ -49,7 +50,7 @@ public class FogOfWar : MonoBehaviour {
 		main.Apply();
 	}
 
-	// performance critical function (on load)
+	// performance critical function
 	// => don't do weird stuff here (or save beforehand)
 	// also optimize when freetime available
 	void placeTile (Vector2 center)
@@ -66,7 +67,7 @@ public class FogOfWar : MonoBehaviour {
 			// calculate actual color to paint on map
 			for (int i=0; i<brushColors.Length; i++)
 			{
-				brushColors[i] = new Color(mapColors[i].r, mapColors[i].g, mapColors[i].b, 1-stampColors[i].grayscale);
+				brushColors[i] = new Color(mapColors[i].r, mapColors[i].g, mapColors[i].b, mapColors[i].a - (stampColors[i].grayscale));
 			}
 
 			// draw on texture
