@@ -34,32 +34,33 @@ public class ShaderFogOfWar : MonoBehaviour
 		// test 
 		int[] triangles = mesh.triangles;
 		Color[] colors = mesh.colors;
+		Vector3[] vertices = mesh.vertices;
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			Debug.Log (tri);
 			colors[triangles[tri]] = Color.white;
 			tri--;
+			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
 			if (Input.GetKey(KeyCode.LeftControl)) tri-=100;
 			colors[triangles[tri]] = Color.red;
 			mesh.colors = colors;
 		}
 		else if (Input.GetKeyDown(KeyCode.W))
 		{
-			Debug.Log (tri);
 			colors[triangles[tri]] = Color.white;
 			tri++;
+			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
 			if (Input.GetKey(KeyCode.LeftControl)) tri+=100;
 			colors[triangles[tri]] = Color.red;
 			mesh.colors = colors;
 		}
 		if (Input.GetKeyDown(KeyCode.A))
 		{
-			triangles [triangles.Length-16]--;
+			triangles [tri]--;
 			mesh.triangles = triangles;
 		}
 		else if (Input.GetKeyDown(KeyCode.S))
 		{
-			triangles [triangles.Length-16]++;
+			triangles [tri]++;
 			mesh.triangles = triangles;
 		}
 		if (Input.GetKeyDown(KeyCode.G))
@@ -72,7 +73,6 @@ public class ShaderFogOfWar : MonoBehaviour
 			{
 				grabbed = false;
 			}
-			Vector3[] vertices = mesh.vertices;
 			vertices[triangles[tri]] += new Vector3 (Input.GetAxis("Mouse X")/3, Input.GetAxis("Mouse Y")/3, 0);
 			mesh.vertices = vertices;
 		}
@@ -220,39 +220,57 @@ public class ShaderFogOfWar : MonoBehaviour
 		vertices [vertices.Length - 1] = new Vector3 (-5, 5, -20);
 
 		// bottom
-		/*triangles [triangles.Length-25] = vertices.Length - 4;
-		triangles [triangles.Length-24] = vertices.Length - 3;
-		triangles [triangles.Length-23] = 1;*/
+		triangles [triangles.Length-24] = vertices.Length - 4;
+		triangles [triangles.Length-23] = vertices.Length - 3;
+		triangles [triangles.Length-22] = 1;
 		
-		/*triangles [triangles.Length-22] = vertices.Length - 3;
-		triangles [triangles.Length-21] = 2*mapWidth-1;
-		triangles [triangles.Length-20] = 1;*/
+		triangles [triangles.Length-21] = vertices.Length - 3;
+		triangles [triangles.Length-20] = 2*mapWidth-1;
+		triangles [triangles.Length-19] = 1;
 
 		// right
-		/*triangles [triangles.Length-19] = vertices.Length - 3;
-		triangles [triangles.Length-18] = vertices.Length - 2;
-		triangles [triangles.Length-17] = 2*mapWidth-1;*/
+		triangles [triangles.Length-18] = vertices.Length - 3;
+		triangles [triangles.Length-17] = vertices.Length - 2;
+		triangles [triangles.Length-16] = 2*mapWidth-1;
 		
-		triangles [triangles.Length-16] = vertices.Length - 2;
-		triangles [triangles.Length-15] = vertices.Length - 5;
-		triangles [triangles.Length-14] = vertices.Length - 3;
+		triangles [triangles.Length-15] = vertices.Length - 2;
+		triangles [triangles.Length-14] = vertices.Length - 5;
+		triangles [triangles.Length-13] = 2*mapWidth-1;
+
+		// top
+		triangles[triangles.Length-12] = vertices.Length - 2;
+		triangles[triangles.Length-11] = vertices.Length - 4 - mapWidth;
+		triangles[triangles.Length-10] = vertices.Length - 5;
+
+		triangles[triangles.Length-9] = vertices.Length - 2;
+		triangles[triangles.Length-8] = vertices.Length - 1;
+		triangles[triangles.Length-7] = vertices.Length - 4 - mapWidth;
+
+		// left
+		triangles[triangles.Length-6] = vertices.Length - 1;
+		triangles[triangles.Length-5] = 1;
+		triangles[triangles.Length-4] = vertices.Length - 4 - mapWidth;
+
+		triangles[triangles.Length-3] = vertices.Length - 1;
+		triangles[triangles.Length-2] = vertices.Length - 4;
+		triangles[triangles.Length-1] = 1;
 
 		// test
 		Color[] colors = new Color[vertices.Length];
 		for (int i=0; i<colors.Length; i++)
 		{
-			colors[i] = Color.magenta;
+			colors[i] = Color.white;
 			colors[i].a = 1;
-			colors[i].r = Random.Range(0.5f, 1.0f);
+			/*colors[i].r = Random.Range(0.5f, 1.0f);
 			colors[i].g = colors[i].r;
-			colors[i].b = colors[i].r;
+			colors[i].b = colors[i].r;*/
 		}
-		colors [vertices.Length - 2] = Color.red;
-		colors [vertices.Length - 5] = Color.green;
-		colors [vertices.Length - 3] = Color.blue;
+		/*colors [vertices.Length - 4 - mapWidth] = Color.red;
+		colors [vertices.Length - 1] = Color.green;
+		colors [vertices.Length - 2] = Color.blue;*/
 
 		// test
-		tri = triangles.Length-16;
+		tri = triangles.Length-10;
 
 		mesh.vertices = vertices;
 		//mesh.uv = uv;

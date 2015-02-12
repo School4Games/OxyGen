@@ -47,7 +47,7 @@ public class MapState : MonoBehaviour
 					player.goToTile (tileNr, map);
 					updateFogOfWar ();
 					player.consumeResources ();
-					//gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
+					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 				}
 			}
 		}
