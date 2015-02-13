@@ -171,7 +171,21 @@ public class WorldMap : MonoBehaviour {
 			for (int x=0; x<tiles.GetUpperBound(0); x++) 
 			{
 				// test
-				tiles[x,y] = Random.Range(0, 3);
+				float distanceFromCenter = (float)Mathf.Abs (x-((tiles.GetUpperBound(0)+1)/2))/(float)tiles.GetUpperBound(0);
+				distanceFromCenter += (float)Mathf.Abs (y-((tiles.GetUpperBound(1)+1)/2))/(float)tiles.GetUpperBound(1);
+				distanceFromCenter = Mathf.Pow (distanceFromCenter, 0.5f);
+
+				int type = 0;
+				float randomness = (Random.value-0.5f)/4;
+				if (distanceFromCenter+randomness > 0.5f)
+				{
+					type = 1;
+				}
+				if (distanceFromCenter+randomness > 0.7f)
+				{
+					type = 2;
+				}
+				tiles[x,y] = type;
 			}
 		}
 		
