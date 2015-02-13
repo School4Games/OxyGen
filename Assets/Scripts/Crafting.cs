@@ -5,6 +5,8 @@ public class Crafting : MonoBehaviour, ICraftingMenuMessageTarget {
 
 	public Player player;
 
+	public ShaderFogOfWar fogOfWar;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -23,11 +25,6 @@ public class Crafting : MonoBehaviour, ICraftingMenuMessageTarget {
 		player.inventory.addResource(Resource.Type.Scrap, -5);
 	}
 
-	public void OnCraftArmor ()
-	{
-		throw new System.NotImplementedException ();
-	}
-
 	public void OnCraftInventorySlot ()
 	{
 		player.inventory.updateSlotNumber(player.inventory.slotNumber+1);
@@ -36,12 +33,14 @@ public class Crafting : MonoBehaviour, ICraftingMenuMessageTarget {
 
 	public void OnCraftVisionUpgrade ()
 	{
-		throw new System.NotImplementedException ();
+		fogOfWar.gameObject.transform.position += Vector3.forward;
+		player.inventory.addResource(Resource.Type.Scrap, -10);
 	}
 
 	public void OnCraftpermashield ()
 	{
-		throw new System.NotImplementedException ();
+		player.inventory.addResource(Resource.Type.Armor, 1);
+		player.inventory.addResource(Resource.Type.Scrap, -10);
 	}
 
 	#endregion

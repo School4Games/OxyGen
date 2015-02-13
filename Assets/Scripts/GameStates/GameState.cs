@@ -68,6 +68,7 @@ public class GameState : MonoBehaviour
 					dungeonFloorsLeft = dungeonEvents[0].floors;
 					dungeonUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
 					dungeoneering = true;
+					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
 				}
 				// spaceship parts
 				if (obj == 3)

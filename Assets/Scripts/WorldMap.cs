@@ -5,8 +5,11 @@ public class WorldMap : MonoBehaviour {
 
 	Texture2D main;
 
-	public int[,] tiles = new int[16,16];
-	public int[,] objects = new int[16,16];
+	public int mapWidth;
+	public int mapHeight;
+
+	public int[,] tiles;
+	public int[,] objects;
 
 	public Terrain[] terrains;
 
@@ -29,6 +32,8 @@ public class WorldMap : MonoBehaviour {
 	void Start ()
 	{
 		main = (Texture2D)renderer.sharedMaterial.mainTexture;
+		tiles = new int[mapWidth,mapHeight];
+		objects = new int[mapWidth,mapHeight];
 		if (!generated)
 		{
 			generate ();
@@ -215,13 +220,14 @@ public class WorldMap : MonoBehaviour {
 			{
 				// test
 				objects[x,y] = Random.Range(1, 4);
-				if (Random.value < 0.7f)
+				if (Random.value < 0.8f)
 				{
 					objects[x,y] = -1;
 				}
 			}
 		}
-		objects[8, 8] = 0;
+		// place base in center
+		objects[mapWidth/2, mapHeight/2] = 0;
 		// random
 		//objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
 

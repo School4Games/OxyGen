@@ -20,6 +20,7 @@ public class Resource
 		Scrap, 
 		Part, 
 		Health, 
+		Armor,
 
 		Length
 	};

@@ -90,13 +90,16 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	{
 		if (enemies.Count > 0)
 		{
+			if (shieldSlider.value < player.inventory.getResources()[(int)Resource.Type.Armor].amount)
+			{
+				shieldSlider.value = Mathf.Min (player.inventory.getResources()[(int)Resource.Type.Armor].amount, shieldSlider.maxValue);
+			}
 			shield = Mathf.RoundToInt(shieldSlider.value);
 			statsDisplay.text = "";
 			statsDisplay.text += "Health: " + player.inventory.getResources()[(int)Resource.Type.Health].amount + "\n";
 			statsDisplay.text += "Shields: " + shield + "\n";
-			//statsDisplay.text += "Lootboost: " + pot+ "\n";
-			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - shield + pot*2) + "</color>";
-			string looseLoot = "<color=#FF0000>" + (- shield) + "</color>";
+			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - Mathf.Max(0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount) + pot*2) + "</color>";
+			string looseLoot = "<color=#FF0000>" + (- Mathf.Max(0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount)) + "</color>";
 			// water
 			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + " (" + winLoot + "/" + looseLoot + ")" + "\n";
 		}
@@ -241,7 +244,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		shieldSlider.interactable = true;
 		yield return new WaitForSeconds (1.0f);
 		// confiscate stakes
-		player.inventory.addResource(Resource.Type.Water, -(pot + shield));
+		player.inventory.addResource(Resource.Type.Water, -(pot + Mathf.Max (0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount)));
 		// do damage if attack hits
 		if (dmg > shield) 
 		{

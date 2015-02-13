@@ -8,7 +8,6 @@ public interface ICraftingMenuMessageTarget : IEventSystemHandler
 {
 	// functions that can be called via the messaging system
 	void OnCraftMedipack();
-	void OnCraftArmor();
 	void OnCraftInventorySlot();
 	void OnCraftVisionUpgrade();
 	void OnCraftpermashield();
