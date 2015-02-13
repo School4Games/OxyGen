@@ -219,17 +219,27 @@ public class WorldMap : MonoBehaviour {
 			for (int x=0; x<objects.GetUpperBound(0); x++) 
 			{
 				// test
-				objects[x,y] = Random.Range(1, 4);
+				objects[x,y] = Random.Range(1, 3);
 				if (Random.value < 0.8f)
 				{
 					objects[x,y] = -1;
 				}
 			}
 		}
+		// place 4 parts
+		int i = 4;
+		while (i>0)
+		{
+			int x = Random.Range(0, mapWidth);
+			int y = Random.Range(0, mapHeight);
+			if (objects[x,y]<0)
+			{
+				objects[x,y] = 3;
+				i--;
+			}
+		}
 		// place base in center
 		objects[mapWidth/2, mapHeight/2] = 0;
-		// random
-		//objects[Random.Range(0, 16), Random.Range(0, 16)] = 0;
 
 		// place
 		objectContainer = new GameObject ();

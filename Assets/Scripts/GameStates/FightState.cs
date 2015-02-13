@@ -94,6 +94,10 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			{
 				shieldSlider.value = Mathf.Min (player.inventory.getResources()[(int)Resource.Type.Armor].amount, shieldSlider.maxValue);
 			}
+			else if (shieldSlider.value > player.inventory.getResources()[(int)Resource.Type.Armor].amount + player.inventory.getResources()[(int)Resource.Type.Water].amount)
+			{
+				shieldSlider.value = player.inventory.getResources()[(int)Resource.Type.Armor].amount + player.inventory.getResources()[(int)Resource.Type.Water].amount;
+			}
 			shield = Mathf.RoundToInt(shieldSlider.value);
 			statsDisplay.text = "";
 			statsDisplay.text += "Health: " + player.inventory.getResources()[(int)Resource.Type.Health].amount + "\n";

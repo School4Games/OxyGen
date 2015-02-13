@@ -31,6 +31,10 @@ public class MapState : MonoBehaviour
 
 	void Update ()
 	{
+		if (Input.GetButtonDown("Jump") && map.objects[(int)player.position.x,(int)player.position.y] >= 0)
+		{
+			gamestate.chooseEvent (map.tiles[(int)player.position.x,(int)player.position.y], map.objects[(int)player.position.x,(int)player.position.y]);
+		}
 		RaycastHit hitInfo;
 
 		if (Physics.Raycast (Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward, out hitInfo))
@@ -48,8 +52,8 @@ public class MapState : MonoBehaviour
 				{
 					player.goToTile (tileNr, map);
 					updateFogOfWar ();
-					player.consumeResources ();
 					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
+					player.consumeResources ();
 				}
 			}
 			else 
@@ -71,6 +75,11 @@ public class MapState : MonoBehaviour
 			foreach (Vector2 remoteNeighbour in remoteNeighbours)
 			{
 				fogOfWar.clearFogTile ((int)remoteNeighbour.x, (int)remoteNeighbour.y);
+				// xD
+				foreach (Vector2 veryRemoteNeighbour in map.getNeighbours (remoteNeighbour))
+				{
+					fogOfWar.clearFogTile ((int)veryRemoteNeighbour.x, (int)veryRemoteNeighbour.y);
+				}
 			}
 		}
 

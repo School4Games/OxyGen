@@ -54,7 +54,7 @@ public class GameState : MonoBehaviour
 				// base
 				if (obj == 0)
 				{
-
+					outposting = true;
 				}
 				// outpost
 				if (obj == 1)
@@ -179,7 +179,7 @@ public class GameState : MonoBehaviour
 			dungeonState.gameObject.SetActive (false);
 		}
 		// deaths
-		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0)
+		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && worldMap.objects[(int)player.position.x, (int)player.position.x] >= 0)
 		{
 			loseUI.SetActive(true);
 			loseText.text = "You suffocated.\nPress R to restart";

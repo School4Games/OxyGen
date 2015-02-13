@@ -21,26 +21,26 @@ public class Crafting : MonoBehaviour, ICraftingMenuMessageTarget {
 
 	public void OnCraftMedipack ()
 	{
-		player.inventory.addResource(Resource.Type.Health, 1);
 		player.inventory.addResource(Resource.Type.Scrap, -5);
+		player.inventory.addResource(Resource.Type.Health, 1);
 	}
 
 	public void OnCraftInventorySlot ()
 	{
-		player.inventory.updateSlotNumber(player.inventory.slotNumber+1);
 		player.inventory.addResource(Resource.Type.Scrap, -10);
+		player.inventory.updateSlotNumber(player.inventory.slotNumber+1);
 	}
 
 	public void OnCraftVisionUpgrade ()
 	{
-		fogOfWar.gameObject.transform.position += Vector3.forward;
 		player.inventory.addResource(Resource.Type.Scrap, -10);
+		fogOfWar.gameObject.transform.position += Vector3.forward;
 	}
 
 	public void OnCraftpermashield ()
 	{
-		player.inventory.addResource(Resource.Type.Armor, 1);
 		player.inventory.addResource(Resource.Type.Scrap, -10);
+		player.inventory.addResource(Resource.Type.Armor, 1);
 	}
 
 	#endregion
