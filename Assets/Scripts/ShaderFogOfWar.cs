@@ -213,9 +213,12 @@ public class ShaderFogOfWar : MonoBehaviour
 		{
 			colors[i] = Color.white;
 			colors[i].a = 1;
-			/*colors[i].r = Random.Range(0.5f, 1.0f);
-			colors[i].g = colors[i].r;
-			colors[i].b = colors[i].r;*/
+			if (i%mapWidth != 0 && i%mapWidth != 1 && i>mapWidth*2 && i<colors.Length-mapWidth*2-4 && (i+1)%mapWidth != 0)
+			{
+				colors[i].r = Random.Range(0.5f, 1.0f);
+				colors[i].g = colors[i].r;
+				colors[i].b = colors[i].r;
+			}
 		}
 		/*colors [vertices.Length - 4 - mapWidth] = Color.red;
 		colors [vertices.Length - 1] = Color.green;
