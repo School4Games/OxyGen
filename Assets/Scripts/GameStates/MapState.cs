@@ -32,17 +32,19 @@ public class MapState : MonoBehaviour
 	void Update ()
 	{
 		RaycastHit hitInfo;
-		if (Input.GetButtonDown ("Fire1"))
-		{
-			if (Physics.Raycast (Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward, out hitInfo))
-			{
-				// 0/0 is center of map, -1/-1 is lower left corner, 1/1 is upper left corner and so on
-				Vector2 hitPoint = hitInfo.point;
-				/*hitPoint.x /= map.gameObject.collider.bounds.extents.x;
-				hitPoint.y /= map.gameObject.collider.bounds.extents.y;*/
-				Vector2 tileNr = map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y));
 
-				if (map.isNeighbour(player.position, tileNr)) 
+		if (Physics.Raycast (Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward, out hitInfo))
+		{
+			// 0/0 is center of map, -1/-1 is lower left corner, 1/1 is upper left corner and so on
+			Vector2 hitPoint = hitInfo.point;
+			/*hitPoint.x /= map.gameObject.collider.bounds.extents.x;
+			hitPoint.y /= map.gameObject.collider.bounds.extents.y;*/
+			Vector2 tileNr = map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y));
+
+			if (map.isNeighbour(player.position, tileNr)) 
+			{
+				fogOfWar.highlightTile ((int)tileNr.x, (int)tileNr.y);
+				if (Input.GetButtonDown ("Fire1"))
 				{
 					player.goToTile (tileNr, map);
 					updateFogOfWar ();
@@ -50,28 +52,27 @@ public class MapState : MonoBehaviour
 					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 				}
 			}
+			else 
+			{
+				fogOfWar.highlightTile (-1, -1);
+			}
 		}
 	}
 
 	void updateFogOfWar ()
 	{
-		// make getNeighbors() in Worldmap?
-		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y);
-		fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y);
-		fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y);
-		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y+1);
-		fogOfWar.clearFogTile ((int)player.position.x, (int)player.position.y-1);
-		// even
-		if (player.position.x % 2 == 0)
+		Vector2[] neighbours = map.getNeighbours (player.position);
+		// here it gets stupid. tiles are cleared multiple times (which is pretty fast, but should be changed when increasing field of vision).
+		Vector2[] remoteNeighbours;
+		foreach (Vector2 neighbour in neighbours)
 		{
-			fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y-1);
-			fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y-1);
+			fogOfWar.clearFogTile ((int)neighbour.x, (int)neighbour.y);
+			remoteNeighbours = map.getNeighbours (neighbour);
+			foreach (Vector2 remoteNeighbour in remoteNeighbours)
+			{
+				fogOfWar.clearFogTile ((int)remoteNeighbour.x, (int)remoteNeighbour.y);
+			}
 		}
-		// odd
-		else 
-		{
-			fogOfWar.clearFogTile ((int)player.position.x-1, (int)player.position.y+1);
-			fogOfWar.clearFogTile ((int)player.position.x+1, (int)player.position.y+1);
-		}
+
 	}
 }

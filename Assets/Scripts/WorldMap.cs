@@ -261,6 +261,34 @@ public class WorldMap : MonoBehaviour {
 		
 	}
 
+	// returns all immediate neighbours including the tile itself
+	public Vector2[] getNeighbours (Vector2 tileNr)
+	{
+		ArrayList neighbours = new ArrayList ();
+
+		neighbours.Add (new Vector2 ((int)tileNr.x, (int)tileNr.y));
+		neighbours.Add (new Vector2 ((int)tileNr.x+1, (int)tileNr.y));
+		neighbours.Add (new Vector2 ((int)tileNr.x-1, (int)tileNr.y));
+		neighbours.Add (new Vector2 ((int)tileNr.x, (int)tileNr.y+1));
+		neighbours.Add (new Vector2 ((int)tileNr.x, (int)tileNr.y-1));
+		
+		// even
+		if (tileNr.x % 2 == 0)
+		{
+			neighbours.Add (new Vector2 ((int)tileNr.x-1, (int)tileNr.y-1));
+			neighbours.Add (new Vector2 ((int)tileNr.x+1, (int)tileNr.y-1));
+		}
+		// odd
+		else 
+		{
+			neighbours.Add (new Vector2 ((int)tileNr.x-1, (int)tileNr.y+1));
+			neighbours.Add (new Vector2 ((int)tileNr.x+1, (int)tileNr.y+1));
+		}
+		Vector2[] neighboursArray = new Vector2[neighbours.Count];
+		neighbours.CopyTo (neighboursArray);
+		return neighboursArray;
+	}
+
 	public Vector2 worldPointToTile (Vector2 worldPoint)
 	{
 		Vector2 tileNr = Vector2.zero;

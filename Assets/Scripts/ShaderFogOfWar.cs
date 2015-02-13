@@ -7,10 +7,14 @@ public class ShaderFogOfWar : MonoBehaviour
 {
 	public Color clearColor;
 
+	public Color highlightColor;
+
 	Mesh mesh;
 
 	int mapWidth;
 	int mapHeight;
+
+	int highlightedTile = -1;
 
 	// test
 	int tri;
@@ -23,59 +27,7 @@ public class ShaderFogOfWar : MonoBehaviour
 
 	void Update () 
 	{
-		// test
-		Vector2 offset = Vector2.one;
-		offset.x = Mathf.Sin(Time.time/30)/10;
-		offset.y = Mathf.Sin(Time.time/30+1)/10;
-		offset.Normalize ();
-		offset *= Time.time/30;
-		renderer.material.SetTextureOffset ("_MainTex", offset);
-
-		// test 
-		int[] triangles = mesh.triangles;
-		Color[] colors = mesh.colors;
-		Vector3[] vertices = mesh.vertices;
-		if (Input.GetKeyDown(KeyCode.Q))
-		{
-			colors[triangles[tri]] = Color.white;
-			tri--;
-			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
-			if (Input.GetKey(KeyCode.LeftControl)) tri-=100;
-			colors[triangles[tri]] = Color.red;
-			mesh.colors = colors;
-		}
-		else if (Input.GetKeyDown(KeyCode.W))
-		{
-			colors[triangles[tri]] = Color.white;
-			tri++;
-			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
-			if (Input.GetKey(KeyCode.LeftControl)) tri+=100;
-			colors[triangles[tri]] = Color.red;
-			mesh.colors = colors;
-		}
-		if (Input.GetKeyDown(KeyCode.A))
-		{
-			triangles [tri]--;
-			mesh.triangles = triangles;
-		}
-		else if (Input.GetKeyDown(KeyCode.S))
-		{
-			triangles [tri]++;
-			mesh.triangles = triangles;
-		}
-		if (Input.GetKeyDown(KeyCode.G))
-		{
-			grabbed = !grabbed;
-		}
-		if (grabbed)
-		{
-			if (Input.GetButton("Fire1"))
-			{
-				grabbed = false;
-			}
-			vertices[triangles[tri]] += new Vector3 (Input.GetAxis("Mouse X")/3, Input.GetAxis("Mouse Y")/3, 0);
-			mesh.vertices = vertices;
-		}
+		testStuff ();
 	}
 
 	public void createFogMesh (Vector2[,] positions)
@@ -214,10 +166,10 @@ public class ShaderFogOfWar : MonoBehaviour
 		}
 
 		// create border
-		vertices [vertices.Length - 4] = new Vector3 (-5, -5, -10);
-		vertices [vertices.Length - 3] = new Vector3 (5, -5, 10);
-		vertices [vertices.Length - 2] = new Vector3 (5, 5, 20);
-		vertices [vertices.Length - 1] = new Vector3 (-5, 5, -20);
+		vertices [vertices.Length - 4] = new Vector3 (-5, -5, 0);
+		vertices [vertices.Length - 3] = new Vector3 (5, -5, 0);
+		vertices [vertices.Length - 2] = new Vector3 (5, 5, 0);
+		vertices [vertices.Length - 1] = new Vector3 (-5, 5, 0);
 
 		// bottom
 		triangles [triangles.Length-24] = vertices.Length - 4;
@@ -289,6 +241,24 @@ public class ShaderFogOfWar : MonoBehaviour
 		mesh.colors = colors;
 	}
 
+	public void highlightTile (int x, int y)
+	{
+		Color[] colors = mesh.colors;
+
+		if (highlightedTile >= 0)
+		{
+			colors[highlightedTile] = clearColor;
+		}
+		if (x>=0 && y>=0)
+		{
+			highlightedTile = x + y * mapWidth;
+
+			colors [highlightedTile] = highlightColor;
+		}
+
+		mesh.colors = colors;
+	}
+
 	void colorTest ()
 	{
 		Color[] colors = new Color[mesh.vertices.Length];
@@ -301,5 +271,62 @@ public class ShaderFogOfWar : MonoBehaviour
 			colors[i].b = colors[i].r;
 		}
 		mesh.colors = colors;
+	}
+
+	void testStuff ()
+	{
+		// test
+		Vector2 offset = Vector2.one;
+		offset.x = Mathf.Sin(Time.time/30)/10;
+		offset.y = Mathf.Sin(Time.time/30+1)/10;
+		offset.Normalize ();
+		offset *= Time.time/30;
+		renderer.material.SetTextureOffset ("_MainTex", offset);
+		
+		// test 
+		int[] triangles = mesh.triangles;
+		Color[] colors = mesh.colors;
+		Vector3[] vertices = mesh.vertices;
+		if (Input.GetKeyDown(KeyCode.Q))
+		{
+			colors[triangles[tri]] = Color.white;
+			tri--;
+			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
+			if (Input.GetKey(KeyCode.LeftControl)) tri-=100;
+			colors[triangles[tri]] = Color.red;
+			mesh.colors = colors;
+		}
+		else if (Input.GetKeyDown(KeyCode.W))
+		{
+			colors[triangles[tri]] = Color.white;
+			tri++;
+			Debug.Log (triangles[tri] + "/" + (vertices.Length-1));
+			if (Input.GetKey(KeyCode.LeftControl)) tri+=100;
+			colors[triangles[tri]] = Color.red;
+			mesh.colors = colors;
+		}
+		if (Input.GetKeyDown(KeyCode.A))
+		{
+			triangles [tri]--;
+			mesh.triangles = triangles;
+		}
+		else if (Input.GetKeyDown(KeyCode.S))
+		{
+			triangles [tri]++;
+			mesh.triangles = triangles;
+		}
+		if (Input.GetKeyDown(KeyCode.G))
+		{
+			grabbed = !grabbed;
+		}
+		if (grabbed)
+		{
+			if (Input.GetButton("Fire1"))
+			{
+				grabbed = false;
+			}
+			vertices[triangles[tri]] += new Vector3 (Input.GetAxis("Mouse X")/3, Input.GetAxis("Mouse Y")/3, 0);
+			mesh.vertices = vertices;
+		}
 	}
 }
