@@ -2,7 +2,33 @@ fileFormatVersion: 2
 guid: ce3656f0e85eedd40a26def0cb25d19f
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mapState: {instanceID: 0}
+  - fightState: {instanceID: 0}
+  - dungeonState: {instanceID: 0}
+  - lootState: {instanceID: 0}
+  - loseState: {instanceID: 0}
+  - winState: {instanceID: 0}
+  - outpostState: {instanceID: 0}
+  - oxygenRefillSound: {instanceID: 0}
+  - getWaterSound: {instanceID: 0}
+  - dieSound: {instanceID: 0}
+  - battleLoop: {instanceID: 0}
+  - mapLoop: {instanceID: 0}
+  - winLoop: {instanceID: 0}
+  - waitLoop: {fileID: 8300000, guid: 8b14567838c201e42a1b7179de656c29, type: 3}
+  - worldMap: {instanceID: 0}
+  - fightUI: {instanceID: 0}
+  - enemyGraphics: {instanceID: 0}
+  - dungeonUI: {instanceID: 0}
+  - lootUI: {instanceID: 0}
+  - loseUI: {instanceID: 0}
+  - loseText: {instanceID: 0}
+  - winUI: {instanceID: 0}
+  - inventoryUI: {instanceID: 0}
+  - outpostUI: {instanceID: 0}
+  - player: {instanceID: 0}
+  - particlePrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
