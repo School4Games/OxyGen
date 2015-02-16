@@ -8,19 +8,15 @@ public class LootState : MonoBehaviour, ILootMenuMessageTarget
 	public GameState gamestate;
 
 	public Inventory lootInventory;
-
-	void Awake ()
-	{
-	
-	}
-
-	public void setLootText (int amount, Resource.Type type)
-	{
-		lootInventory.addResource(type, amount);
-	}
 	
 	public void OnLeave ()
 	{
+		// clear inventory
+		foreach (Resource resource in lootInventory.resources)
+		{
+			resource.amount = 0;
+		}
+
 		gamestate.looting = false;
 		gamestate.switchState ();
 	}

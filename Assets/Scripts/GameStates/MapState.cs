@@ -26,6 +26,8 @@ public class MapState : MonoBehaviour
 			}
 		}
 		player.goToTile (basePosition, map);
+		// center camera
+		Camera.main.transform.position = new Vector3 (player.gameObject.transform.position.x, player.gameObject.transform.position.y, Camera.main.transform.position.z);
 		updateFogOfWar ();
 	}
 

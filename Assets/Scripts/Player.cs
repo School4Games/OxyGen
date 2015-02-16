@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 
 	public Inventory inventory;
 
+	public GameState gameState;
+
 	void Start ()
 	{
 	
@@ -23,9 +25,12 @@ public class Player : MonoBehaviour
 	// probably return true on success for feedback to wherever this is called from
 	public void goToTile (Vector2 tileNr, WorldMap map)
 	{
+		// move
 		position = tileNr;
 		Vector2 worldPosition = map.tileToWorldPoint(tileNr);
 		transform.position = new Vector3 (worldPosition.x, worldPosition.y, transform.position.z);
+		// play sound
+		gameState.playRandomSound (gameState.stepSounds);
 	}
 
 	public void consumeResources ()

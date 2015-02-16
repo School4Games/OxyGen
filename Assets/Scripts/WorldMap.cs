@@ -16,6 +16,8 @@ public class WorldMap : MonoBehaviour {
 	public GameObject[] objectPrefabs = new GameObject[4];
 
 	public ShaderFogOfWar fogOfWar;
+
+	public GameState gameState;
 		
 	public Texture2D stamp;
 	public int hexSideLength = 64;
@@ -138,6 +140,7 @@ public class WorldMap : MonoBehaviour {
 
 	public void generate () 
 	{
+		gameState.playLoop (gameState.waitLoop);
 		if (!main)
 		{
 			main = (Texture2D)renderer.sharedMaterial.mainTexture;
@@ -150,6 +153,7 @@ public class WorldMap : MonoBehaviour {
 		placeObjects ();
 		createFogOfWar ();
 
+		gameState.playLoop (gameState.mapLoop);
 		generated = true;
 
 	}

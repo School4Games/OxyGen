@@ -7,6 +7,8 @@ public class Inventory : MonoBehaviour
 	// always in sync with existing resources
 	public Resource[] resources = new Resource[5];
 
+	public GameState gameState;
+
 	public GameObject slotPrefab;
 
 	public int slotNumber = 5;
@@ -65,17 +67,25 @@ public class Inventory : MonoBehaviour
 		{
 			occupiedSlots += Mathf.CeilToInt ((float)resource.amount / (float)resource.stackSize);
 		}
-		
+
 		// throw out resources that don't fit in inventory
+		int discardedResources = 0;
 		while (occupiedSlots > slots.Length)
 		{
 			// lazy
 			resources[(int)type].amount--;
+			discardedResources++;
 			occupiedSlots = 0;
 			foreach (Resource resource in resources)
 			{
 				occupiedSlots += Mathf.CeilToInt ((float)resource.amount / (float)resource.stackSize);
 			}
+		}
+		if (discardedResources > 0)
+		{
+			gameState.lootState.lootInventory.addResource (type, discardedResources);
+			gameState.looting = true;
+			gameState.switchState();
 		}
 		
 		// update display

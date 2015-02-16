@@ -26,6 +26,7 @@ public class OutpostState : MonoBehaviour, IOutpostMenuMessageTarget {
 	public void OnOxygenRefill ()
 	{
 		gamestate.player.inventory.addResource(Resource.Type.Oxygen, 1);
+		gamestate.playSound (gamestate.oxygenRefillSound);
 	}
 
 	#endregion

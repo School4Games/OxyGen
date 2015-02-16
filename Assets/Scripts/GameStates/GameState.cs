@@ -15,6 +15,18 @@ public class GameState : MonoBehaviour
 	public WinState winState;
 	public OutpostState outpostState;
 
+	AudioSource loopAudioSource;
+	AudioSource effectAudioSource;
+	public AudioClip[] stepSounds;
+	public AudioClip oxygenRefillSound;
+	public AudioClip getWaterSound;
+	public AudioClip dieSound;
+	public AudioClip battleLoop;
+	public AudioClip mapLoop;
+	public AudioClip winLoop;
+	// hehe
+	public AudioClip waitLoop;
+
 	public WorldMap worldMap;
 
 	public GameObject fightUI;
@@ -37,9 +49,31 @@ public class GameState : MonoBehaviour
 	public bool fighting;
 	public bool looting;
 
-	void Update () 
+	void Start () 
 	{
+		loopAudioSource = Camera.main.GetComponents<AudioSource> ()[0];
+		effectAudioSource = Camera.main.GetComponents<AudioSource> ()[1];
+	}
 
+	public void playLoop (AudioClip sound)
+	{
+		if (loopAudioSource.clip != sound)
+		{
+			loopAudioSource.clip = sound;
+			loopAudioSource.Play ();
+		}
+	}
+
+	public void playSound (AudioClip sound)
+	{
+		effectAudioSource.clip = sound;
+		effectAudioSource.PlayOneShot (sound);
+	}
+
+	public void playRandomSound (AudioClip[] sounds)
+	{
+		int index = Random.Range (0, sounds.Length);
+		effectAudioSource.PlayOneShot (sounds[index]);
 	}
 
 	// somehow counter intuitive flow ...
@@ -141,6 +175,8 @@ public class GameState : MonoBehaviour
 			{
 				int amount = Random.Range (resourceEvent.minAmount, resourceEvent.maxAmount+1);
 				spawnParticles (amount);
+				// just water sound for now
+				playSound (getWaterSound);
 				if (Random.value < resourceEvent.probability)
 				{
 					player.inventory.addResource (resourceEvent.type, amount);
@@ -168,6 +204,8 @@ public class GameState : MonoBehaviour
 		// public var somwhere would be nice
 		if (player.inventory.getResources()[(int)Resource.Type.Part].amount >= 4)
 		{
+			playLoop (winLoop);
+			loopAudioSource.loop = false;
 			winUI.SetActive(true);
 			loseUI.SetActive(false);
 			lootState.gameObject.SetActive(false);
@@ -181,6 +219,8 @@ public class GameState : MonoBehaviour
 		// deaths
 		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && worldMap.objects[(int)player.position.x, (int)player.position.x] >= 0)
 		{
+			playSound (dieSound);
+			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
 			loseText.text = "You suffocated.\nPress R to restart";
 			loseState.gameObject.SetActive (true);
@@ -194,6 +234,8 @@ public class GameState : MonoBehaviour
 		}
 		else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
 		{
+			playSound (dieSound);
+			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
 			loseText.text = "You dehydrated.\nPress R to restart";
 			loseState.gameObject.SetActive (true);
@@ -207,6 +249,8 @@ public class GameState : MonoBehaviour
 		}
 		else if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
 		{
+			playSound (dieSound);
+			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
 			loseText.text = "You died.\nPress R to restart";
 			loseState.gameObject.SetActive (true);
@@ -220,6 +264,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (fighting)
 		{
+			playLoop (battleLoop);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
 			inventoryUI.SetActive (false);
@@ -272,6 +317,7 @@ public class GameState : MonoBehaviour
 		}
 		else
 		{
+			playLoop (mapLoop);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
 			inventoryUI.SetActive (true);
