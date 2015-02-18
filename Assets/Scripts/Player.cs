@@ -8,8 +8,6 @@ public class Player : MonoBehaviour
 
 	public int inventorySlots = 5;
 
-	public int permaShield = 0;
-
 	public Inventory inventory;
 
 	public GameState gameState;

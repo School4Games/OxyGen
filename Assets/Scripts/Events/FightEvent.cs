@@ -10,5 +10,6 @@ public class FightEvent : Event {
 	public int minSides;
 	public int maxSides;
 
-	public int loot;
+	// normal loot is half the maximum attack value
+	public int lootBonus;
 }

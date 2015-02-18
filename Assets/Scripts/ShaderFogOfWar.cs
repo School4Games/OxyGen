@@ -9,6 +9,9 @@ public class ShaderFogOfWar : MonoBehaviour
 
 	public Color highlightColor;
 
+	public Vector2 windDriection = Vector2.one;
+	public float cloudSpeed = 1;
+
 	Mesh mesh;
 
 	int mapWidth;
@@ -27,6 +30,8 @@ public class ShaderFogOfWar : MonoBehaviour
 
 	void Update () 
 	{
+		moveTexture ();
+
 		testStuff ();
 	}
 
@@ -276,19 +281,17 @@ public class ShaderFogOfWar : MonoBehaviour
 		mesh.colors = colors;
 	}
 
+	void moveTexture ()
+	{
+		Vector2 offset = windDriection * Time.time/30 * cloudSpeed;
+		renderer.material.SetTextureOffset ("_MainTex", offset);
+	}
+
 	void testStuff ()
 	{
 		// test
-		Vector2 offset = Vector2.one;
-		offset.x = Mathf.Sin(Time.time/30)/10;
-		offset.y = Mathf.Sin(Time.time/30+1)/10;
-		offset.Normalize ();
-		offset *= Time.time/30;
-		renderer.material.SetTextureOffset ("_MainTex", offset);
-		
-		// test 
-		int[] triangles = mesh.triangles;
 		Color[] colors = mesh.colors;
+		int[] triangles = mesh.triangles;
 		Vector3[] vertices = mesh.vertices;
 		if (Input.GetKeyDown(KeyCode.Q))
 		{

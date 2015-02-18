@@ -81,7 +81,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	void updateSliderDimensions ()
 	{
-		// can bet more than is currently in possession
 		float maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
 		shieldSlider.maxValue = maxDmg;
 	}
@@ -175,12 +174,12 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		}
 	}
 
-	public void spawnEnemy (int minDice, int maxDice, int minSides, int maxSides, int loot) 
+	public void spawnEnemy (int minDice, int maxDice, int minSides, int maxSides, int lootBonus) 
 	{
 		Enemy newEnemy = new Enemy();
-		newEnemy.dice = Random.Range (minDice, maxDice+1);;
-		newEnemy.sides = Random.Range (minSides, maxSides+1);;
-		newEnemy.loot = loot;
+		int dice = Random.Range (minDice, maxDice+1);;
+		int sides = Random.Range (minSides, maxSides+1);;
+		newEnemy.init (dice, sides, lootBonus);
 
 		enemies.Add (newEnemy);
 

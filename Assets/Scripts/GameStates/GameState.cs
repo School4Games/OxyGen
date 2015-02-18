@@ -126,7 +126,7 @@ public class GameState : MonoBehaviour
 						{
 							fightUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
 							enemyGraphics.overrideSprite = worldMap.terrains[terrain].dungeonEnemy;
-							fightState.spawnEnemy(dungeonFightEvent.minDice, dungeonFightEvent.maxDice, dungeonFightEvent.minSides, dungeonFightEvent.maxSides, dungeonFightEvent.loot);
+							fightState.spawnEnemy(dungeonFightEvent.minDice, dungeonFightEvent.maxDice, dungeonFightEvent.minSides, dungeonFightEvent.maxSides, dungeonFightEvent.lootBonus);
 							fighting = true;
 						}
 					}
@@ -161,7 +161,7 @@ public class GameState : MonoBehaviour
 					{
 						fightUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].outdoorScreen;
 						enemyGraphics.overrideSprite = worldMap.terrains[terrain].outdoorEnemy;
-						fightState.spawnEnemy(fightEvent.minDice, fightEvent.maxDice, fightEvent.minSides, fightEvent.maxSides, fightEvent.loot);
+						fightState.spawnEnemy(fightEvent.minDice, fightEvent.maxDice, fightEvent.minSides, fightEvent.maxSides, fightEvent.lootBonus);
 						fighting = true;
 					}
 				}
@@ -217,7 +217,7 @@ public class GameState : MonoBehaviour
 			dungeonState.gameObject.SetActive (false);
 		}
 		// deaths
-		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && worldMap.objects[(int)player.position.x, (int)player.position.x] >= 0)
+		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && (worldMap.objects[(int)player.position.x, (int)player.position.x] < 0 || worldMap.objects[(int)player.position.x, (int)player.position.x] > 1))
 		{
 			playSound (dieSound);
 			loopAudioSource.Stop ();
