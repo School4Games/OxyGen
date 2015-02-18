@@ -9,6 +9,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	public GameState gamestate;
 
+	public Animator enemyAnimator;
+
 	ArrayList enemies = new ArrayList();
 
 	int shield = 0;
@@ -251,11 +253,13 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		// do damage if attack hits
 		if (dmg > shield) 
 		{
+			gamestate.playSound (gamestate.enemyWinSound);
 			player.inventory.addResource(Resource.Type.Health, -1);
 		}
 		// otherwise give loot
 		else 
 		{
+			gamestate.playSound (gamestate.enemyDieSound);
 			player.inventory.addResource(Resource.Type.Water, pot*2 + (enemies[0] as Enemy).loot);
 		}
 		// reset shield and pot (and rolling)
@@ -268,8 +272,11 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		updatePointerPosition ();
 		pointer.enabled = false;
 		// kill enemy
+		enemyAnimator.SetBool("dead", true);
 		enemies.RemoveAt (0);
+		yield return new WaitForSeconds (2);
 		rolling = false;
+		enemyAnimator.SetBool("dead", false);
 		if (enemies.Count > 0) 
 		{
 			drawGraph ();

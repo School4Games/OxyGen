@@ -21,6 +21,8 @@ public class GameState : MonoBehaviour
 	public AudioClip oxygenRefillSound;
 	public AudioClip getWaterSound;
 	public AudioClip dieSound;
+	public AudioClip enemyDieSound;
+	public AudioClip enemyWinSound;
 	public AudioClip battleLoop;
 	public AudioClip mapLoop;
 	public AudioClip winLoop;
