@@ -12,6 +12,8 @@ public class MapState : MonoBehaviour
 
 	public Player player;
 
+	bool moved = false;
+
 	void Start ()
 	{
 		Vector2 basePosition = Vector2.zero;
@@ -39,6 +41,12 @@ public class MapState : MonoBehaviour
 		}
 		RaycastHit hitInfo;
 
+		// close tutorial text
+		if (Input.GetButtonDown ("Fire1"))
+		{
+			gamestate.tutorialState.disableAllMessages ();
+		}
+
 		if (Physics.Raycast (Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward, out hitInfo))
 		{
 			// 0/0 is center of map, -1/-1 is lower left corner, 1/1 is upper left corner and so on
@@ -52,6 +60,10 @@ public class MapState : MonoBehaviour
 				fogOfWar.highlightTile ((int)tileNr.x, (int)tileNr.y);
 				if (Input.GetButtonDown ("Fire1"))
 				{
+					if (!moved)
+					{
+						gamestate.tutorialState.enableMessage (1);
+					}
 					player.goToTile (tileNr, map);
 					updateFogOfWar ();
 					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);

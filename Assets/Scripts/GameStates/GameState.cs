@@ -14,6 +14,7 @@ public class GameState : MonoBehaviour
 	public LoseState loseState;
 	public WinState winState;
 	public OutpostState outpostState;
+	public TutorialState tutorialState;
 
 	AudioSource loopAudioSource;
 	AudioSource effectAudioSource;
@@ -55,6 +56,7 @@ public class GameState : MonoBehaviour
 	{
 		loopAudioSource = Camera.main.GetComponents<AudioSource> ()[0];
 		effectAudioSource = Camera.main.GetComponents<AudioSource> ()[1];
+		tutorialState.enableMessage (0);
 	}
 
 	public void playLoop (AudioClip sound)

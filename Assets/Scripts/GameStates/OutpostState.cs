@@ -5,20 +5,16 @@ public class OutpostState : MonoBehaviour, IOutpostMenuMessageTarget {
 
 	public GameState gamestate;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	void Awake ()
+	{
+		gamestate.tutorialState.enableMessage (4);
 	}
 
 	#region IOutpostMenuMessageTarget implementation
 
 	public void OnLeave ()
 	{
+		gamestate.tutorialState.disableAllMessages ();
 		gamestate.outposting = false;
 		gamestate.switchState ();
 	}

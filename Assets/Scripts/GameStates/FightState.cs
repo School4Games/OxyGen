@@ -10,6 +10,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	public GameState gamestate;
 
 	public Animator enemyAnimator;
+	public Animator overlayAnimator;
 
 	ArrayList enemies = new ArrayList();
 
@@ -43,9 +44,10 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	public GameObject barPrefab;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
 	{
 		pointer.enabled = false;
+		gamestate.tutorialState.enableMessage (3);
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
 		{
@@ -78,6 +80,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 
 	public void OnRoll ()
 	{
+		gamestate.tutorialState.disableAllMessages ();
 		StartCoroutine ("roll");
 	}
 
@@ -254,6 +257,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		if (dmg > shield) 
 		{
 			gamestate.playSound (gamestate.enemyWinSound);
+			overlayAnimator.SetBool ("hit", true);
 			player.inventory.addResource(Resource.Type.Health, -1);
 		}
 		// otherwise give loot
@@ -277,6 +281,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		yield return new WaitForSeconds (2);
 		rolling = false;
 		enemyAnimator.SetBool("dead", false);
+		overlayAnimator.SetBool ("hit", false);
 		if (enemies.Count > 0) 
 		{
 			drawGraph ();
