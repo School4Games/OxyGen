@@ -48,6 +48,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 	{
 		pointer.enabled = false;
 		gamestate.tutorialState.enableMessage (3);
+		float maxDmg = (enemies[0] as Enemy).dice * (enemies[0] as Enemy).sides;
+		gamestate.tutorialState.setEnemyText (maxDmg);
 		// test
 		/*foreach (int eventCount in RNG.getEventCount(2, 6))
 		{
