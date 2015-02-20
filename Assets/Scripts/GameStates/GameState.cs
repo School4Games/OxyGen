@@ -110,6 +110,7 @@ public class GameState : MonoBehaviour
 					dungeonUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
 					dungeoneering = true;
 					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
+					worldMap.objectGraphics[(int)player.position.x, (int)player.position.y].color = Color.gray;
 				}
 				// spaceship parts
 				if (obj == 3)
@@ -117,6 +118,7 @@ public class GameState : MonoBehaviour
 					player.inventory.addResource (Resource.Type.Part, 1);
 					// note to self: don't ever use vectors as int storage again
 					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
+					worldMap.objectGraphics[(int)player.position.x, (int)player.position.y].color = Color.clear;
 					// make parts disappear visually?
 				}
 			}

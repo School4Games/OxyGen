@@ -10,6 +10,9 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
 	public Image fill;
 
+	public Image icon;
+
+	// does not make all that much sense to have these in everery slot ...
 	public Texture2D normalCursor;
 	public Texture2D dragCursor;
 
@@ -37,6 +40,12 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 		fill.rectTransform.offsetMin = Vector2.zero;
 		// The background color is the same as the main color, but lighter - GDD -
 		fill.color = new Color (resource.color.r+0.5f, resource.color.g+0.5f, resource.color.b+0.5f);
+		icon.overrideSprite = resource.icon;
+		icon.color = Color.white;
+		if (resource.icon == null)
+		{
+			icon.color = Color.clear;
+		}
 	}
 
 

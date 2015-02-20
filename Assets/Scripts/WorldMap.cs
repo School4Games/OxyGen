@@ -10,6 +10,7 @@ public class WorldMap : MonoBehaviour {
 
 	public int[,] tiles;
 	public int[,] objects;
+	public SpriteRenderer[,] objectGraphics; 
 
 	public Terrain[] terrains;
 
@@ -36,6 +37,7 @@ public class WorldMap : MonoBehaviour {
 		main = (Texture2D)renderer.sharedMaterial.mainTexture;
 		tiles = new int[mapWidth,mapHeight];
 		objects = new int[mapWidth,mapHeight];
+		objectGraphics = new SpriteRenderer[mapWidth,mapHeight];
 		if (!generated)
 		{
 			generate ();
@@ -255,6 +257,7 @@ public class WorldMap : MonoBehaviour {
 				if (objects[x,y] >= 0)
 				{
 					GameObject placedObject = (GameObject) Instantiate (objectPrefabs[objects[x,y]], new Vector3 (0,0,-1), Quaternion.identity);
+					objectGraphics[x,y] = placedObject.GetComponent<SpriteRenderer>();
 					Vector2 worldPosition = tileToWorldPoint(new Vector2 (x, y));
 					placedObject.transform.parent = objectContainer.transform;
 					placedObject.transform.position = new Vector3 (worldPosition.x, worldPosition.y, placedObject.transform.position.z);

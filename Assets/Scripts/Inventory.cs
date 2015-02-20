@@ -136,6 +136,7 @@ public class Inventory : MonoBehaviour
 				Resource resource = new Resource();
 				resource.amount = amount;
 				resource.color = resources[currentResourceIndex].color;
+				resource.icon = resources[currentResourceIndex].icon;
 				resource.stackSize = resources[currentResourceIndex].stackSize;
 				resource.type = resources[currentResourceIndex].type;
 				resource.amount = Mathf.Min (resource.amount, stackSize);

@@ -12,6 +12,7 @@ public class Resource
 	public int amount;
 	public int stackSize;
 	public Color color;
+	public Sprite icon;
 
 	public enum Type 
 	{
