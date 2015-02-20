@@ -10,6 +10,9 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
 	public Image fill;
 
+	public Texture2D normalCursor;
+	public Texture2D dragCursor;
+
 	// storing data in two places is bad, mkay ...
 	public Resource content;
 
@@ -20,7 +23,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
 	void Awake ()
 	{
-
+		Cursor.SetCursor (normalCursor, Vector2.zero, CursorMode.Auto);
 	}
 
 	public void update (Resource resource)
@@ -40,6 +43,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 	#region IBeginDragHandler implementation
 	public void OnBeginDrag (PointerEventData eventData)
 	{
+		Cursor.SetCursor (dragCursor, Vector2.zero, CursorMode.Auto);
 		GetComponent<CanvasGroup>().blocksRaycasts = false;
 		if (inventory == null)
 		{
@@ -53,6 +57,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
 	public void OnDrag (PointerEventData eventData)
 	{
+
 		// buggy. ask exactly what desired behaviour is before fixing
 		/*text.transform.position = eventData.position;
 		fill.transform.position = eventData.position;*/
@@ -64,6 +69,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 	
 	public void OnEndDrag (PointerEventData eventData)
 	{
+		Cursor.SetCursor (normalCursor, Vector2.zero, CursorMode.Auto);
 		GetComponent<CanvasGroup>().blocksRaycasts = true;
 		/*text.transform.position = oldposition;
 		fill.transform.position = oldposition;
