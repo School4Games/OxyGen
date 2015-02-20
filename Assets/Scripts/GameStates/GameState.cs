@@ -223,14 +223,16 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
-		// deaths
+		// deaths(/ taking damage)
 		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && (worldMap.objects[(int)player.position.x, (int)player.position.x] < 0 || worldMap.objects[(int)player.position.x, (int)player.position.x] > 1))
 		{
-			playSound (dieSound);
-			loopAudioSource.Stop ();
+			// make player get hit sound instead?
+			playSound (enemyWinSound);
+			player.inventory.addResource (Resource.Type.Health, -1);
+			/*loopAudioSource.Stop ();
 			loseUI.SetActive(true);
 			loseText.text = "You suffocated.\nPress R to restart";
-			loseState.gameObject.SetActive (true);
+			loseState.gameObject.SetActive (true);*/
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
@@ -241,11 +243,12 @@ public class GameState : MonoBehaviour
 		}
 		else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
 		{
-			playSound (dieSound);
-			loopAudioSource.Stop ();
+			playSound (enemyWinSound);
+			player.inventory.addResource (Resource.Type.Health, -1);
+			/*loopAudioSource.Stop ();
 			loseUI.SetActive(true);
 			loseText.text = "You dehydrated.\nPress R to restart";
-			loseState.gameObject.SetActive (true);
+			loseState.gameObject.SetActive (true);*/
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
 			dungeonUI.SetActive(false);
@@ -254,12 +257,15 @@ public class GameState : MonoBehaviour
 			fightState.gameObject.SetActive(false);
 			dungeonState.gameObject.SetActive (false);
 		}
+		// actually die here
 		else if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
 		{
 			playSound (dieSound);
 			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
-			loseText.text = "You died.\nPress R to restart";
+			if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0) loseText.text = "You suffocated.\nPress R to restart";
+			else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0) loseText.text = "You suffocated.\nPress R to restart";
+			else loseText.text = "You died.\nPress R to restart";
 			loseState.gameObject.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
