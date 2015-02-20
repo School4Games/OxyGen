@@ -63,6 +63,7 @@ public class MapState : MonoBehaviour
 					if (!moved)
 					{
 						gamestate.tutorialState.enableMessage (1);
+						moved = true;
 					}
 					player.goToTile (tileNr, map);
 					updateFogOfWar ();

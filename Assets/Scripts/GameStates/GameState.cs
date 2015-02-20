@@ -23,6 +23,7 @@ public class GameState : MonoBehaviour
 	public AudioClip getWaterSound;
 	public AudioClip dieSound;
 	public AudioClip enemyDieSound;
+	public AudioClip areaClearSound;
 	public AudioClip enemyWinSound;
 	public AudioClip battleLoop;
 	public AudioClip mapLoop;

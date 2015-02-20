@@ -266,6 +266,9 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		else 
 		{
 			gamestate.playSound (gamestate.enemyDieSound);
+			enemyAnimator.SetBool("dead", true);
+			yield return new WaitForSeconds (gamestate.enemyDieSound.length);
+			gamestate.playSound (gamestate.areaClearSound);
 			player.inventory.addResource(Resource.Type.Water, pot*2 + (enemies[0] as Enemy).loot);
 		}
 		// reset shield and pot (and rolling)
@@ -278,7 +281,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		updatePointerPosition ();
 		pointer.enabled = false;
 		// kill enemy
-		enemyAnimator.SetBool("dead", true);
 		enemies.RemoveAt (0);
 		yield return new WaitForSeconds (2);
 		rolling = false;
