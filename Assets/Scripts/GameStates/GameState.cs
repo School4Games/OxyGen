@@ -115,13 +115,14 @@ public class GameState : MonoBehaviour
 					player.inventory.addResource (Resource.Type.Part, 1);
 					// note to self: don't ever use vectors as int storage again
 					worldMap.objects[(int)player.position.x, (int)player.position.y] = -1;
-					// make parts diappear visually?
+					// make parts disappear visually?
 				}
 			}
 			// dungeon events
 			// called from dungeon state
 			else if (dungeonFloorsLeft > 0)
 			{
+				Debug.Log ("chosing dungeon event ...");
 				FightEvent[] dungeonFightEvents = dungeonEvents[0].fightEvents;
 				foreach (FightEvent dungeonFightEvent in dungeonFightEvents) 
 				{
@@ -129,6 +130,7 @@ public class GameState : MonoBehaviour
 					{
 						if (Random.value < dungeonFightEvent.probability)
 						{
+							Debug.Log ("dungeon fight event!" + terrain);
 							fightUI.GetComponent<Image>().overrideSprite = worldMap.terrains[terrain].dungeonScreen;
 							enemyGraphics.overrideSprite = worldMap.terrains[terrain].dungeonEnemy;
 							fightState.spawnEnemy(dungeonFightEvent.minDice, dungeonFightEvent.maxDice, dungeonFightEvent.minSides, dungeonFightEvent.maxSides, dungeonFightEvent.lootBonus);

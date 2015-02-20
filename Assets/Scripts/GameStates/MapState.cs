@@ -55,6 +55,12 @@ public class MapState : MonoBehaviour
 			hitPoint.y /= map.gameObject.collider.bounds.extents.y;*/
 			Vector2 tileNr = map.worldPointToTile(new Vector2 (hitPoint.x, hitPoint.y));
 
+			string log = "tile " + tileNr + " is $" + map.tiles[(int)tileNr.x,(int)tileNr.y];
+			log = log.Replace ("$0", "forest");
+			log = log.Replace ("$1", "desert");
+			log = log.Replace ("$2", "sentinel");
+			Debug.Log (log);
+
 			if (map.isNeighbour(player.position, tileNr)) 
 			{
 				fogOfWar.highlightTile ((int)tileNr.x, (int)tileNr.y);

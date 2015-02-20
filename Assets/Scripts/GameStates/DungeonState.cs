@@ -13,6 +13,6 @@ public class DungeonState : MonoBehaviour, IDungeonMenuMessageTarget
 
 	public void OnProceed ()
 	{
-		gamestate.chooseEvent (gamestate.worldMap.tiles[(int)gamestate.player.position.x, (int)gamestate.player.position.x], 2);
+		gamestate.chooseEvent (gamestate.worldMap.tiles[(int)gamestate.player.position.x, (int)gamestate.player.position.y], 2);
 	}
 }
