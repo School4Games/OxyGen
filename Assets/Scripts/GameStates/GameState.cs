@@ -16,6 +16,8 @@ public class GameState : MonoBehaviour
 	public OutpostState outpostState;
 	public TutorialState tutorialState;
 
+	public Animator overlayAnimator;
+
 	AudioSource loopAudioSource;
 	AudioSource effectAudioSource;
 	public AudioClip[] stepSounds;
@@ -229,43 +231,23 @@ public class GameState : MonoBehaviour
 			// make player get hit sound instead?
 			playSound (enemyWinSound);
 			player.inventory.addResource (Resource.Type.Health, -1);
-			/*loopAudioSource.Stop ();
-			loseUI.SetActive(true);
-			loseText.text = "You suffocated.\nPress R to restart";
-			loseState.gameObject.SetActive (true);*/
-			lootState.gameObject.SetActive(false);
-			fightUI.SetActive(false);
-			dungeonUI.SetActive(false);
-			lootUI.SetActive(false);
-			mapState.gameObject.SetActive(false);
-			fightState.gameObject.SetActive(false);
-			dungeonState.gameObject.SetActive (false);
+			overlayAnimator.Play ("fightHit");
+			if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0) loseText.text = loseText.text.Replace ("died", "suffocated");
 		}
 		else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
 		{
 			playSound (enemyWinSound);
 			player.inventory.addResource (Resource.Type.Health, -1);
-			/*loopAudioSource.Stop ();
-			loseUI.SetActive(true);
-			loseText.text = "You dehydrated.\nPress R to restart";
-			loseState.gameObject.SetActive (true);*/
-			lootState.gameObject.SetActive(false);
-			fightUI.SetActive(false);
-			dungeonUI.SetActive(false);
-			lootUI.SetActive(false);
-			mapState.gameObject.SetActive(false);
-			fightState.gameObject.SetActive(false);
-			dungeonState.gameObject.SetActive (false);
+			overlayAnimator.Play ("fightHit");
+			if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0) loseText.text = loseText.text.Replace ("died", "dehydrated");
 		}
 		// actually die here
-		else if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
+		if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
 		{
+			overlayAnimator.Play ("fightHit");
 			playSound (dieSound);
 			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
-			if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0) loseText.text = "You suffocated.\nPress R to restart";
-			else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0) loseText.text = "You suffocated.\nPress R to restart";
-			else loseText.text = "You died.\nPress R to restart";
 			loseState.gameObject.SetActive (true);
 			lootState.gameObject.SetActive(false);
 			fightUI.SetActive(false);
