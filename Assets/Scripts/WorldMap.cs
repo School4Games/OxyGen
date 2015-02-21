@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class WorldMap : MonoBehaviour {
 
@@ -31,6 +32,10 @@ public class WorldMap : MonoBehaviour {
 
 	// not the best name
 	GameObject objectContainer;
+
+	// test
+	public Text progressText;
+	public Slider progressBar;
 
 	void Start ()
 	{
@@ -150,35 +155,40 @@ public class WorldMap : MonoBehaviour {
 		// test (savegames)
 		//Random.seed = 216389;
 		clearTexture ();
-		placeTiles ();
+		progressText.text = "Placing tiles ...";
+		progressBar.value = 0;
 		clearObjects ();
-		placeObjects ();
-		createFogOfWar ();
-
-		gameState.playLoop (gameState.mapLoop);
-		generated = true;
-
+		StartCoroutine ("placeTiles");
 	}
 
-	void createFogOfWar ()
+	IEnumerator createFogOfWar ()
 	{
 		Vector2[,] tilepositions = new Vector2[tiles.GetUpperBound(0),tiles.GetUpperBound(1)];
 		for (int y=0; y<tiles.GetUpperBound(1); y++)
 		{
+			progressBar.value+=1.0f/(float)tiles.GetUpperBound(1);
+			yield return new WaitForEndOfFrame ();
 			for (int x=0; x<tiles.GetUpperBound(0); x++)
 			{
 				tilepositions[x,y] = tileToWorldPoint (new Vector2 (x, y));
 			}
 		}
 		fogOfWar.createFogMesh (tilepositions);
+
+		gameState.OnFinishedGenerating ();
+		generated = true;
+		gameState.switchState ();
+		gameState.playLoop (gameState.mapLoop);
 	}
 
-	void placeTiles ()
+	IEnumerator placeTiles ()
 	{
 		// fill array
 		// test
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
 		{
+			progressBar.value+=0.5f/(float)tiles.GetUpperBound(1);
+			yield return new WaitForEndOfFrame ();
 			for (int x=0; x<tiles.GetUpperBound(0); x++) 
 			{
 				// test
@@ -203,6 +213,8 @@ public class WorldMap : MonoBehaviour {
 		// paint
 		for (int y=0; y<tiles.GetUpperBound(1); y++) 
 		{
+			progressBar.value+=0.5f/(float)tiles.GetUpperBound(1);
+			yield return new WaitForEndOfFrame ();
 			for (int x=0; x<tiles.GetUpperBound(0); x++) 
 			{
 				Vector2 center = getHexCenter (x, y);
@@ -214,14 +226,20 @@ public class WorldMap : MonoBehaviour {
 
 		// apply
 		main.Apply();
+
+		progressText.text = "Placing objects ...";
+		progressBar.value = 0;
+		StartCoroutine ("placeObjects");
 	}
 
-	void placeObjects ()
+	IEnumerator placeObjects ()
 	{
 		// fill array
 		// test
 		for (int y=0; y<objects.GetUpperBound(1); y++) 
 		{
+			progressBar.value+=0.5f/(float)tiles.GetUpperBound(1);
+			yield return new WaitForEndOfFrame ();
 			for (int x=0; x<objects.GetUpperBound(0); x++) 
 			{
 				// test
@@ -252,6 +270,8 @@ public class WorldMap : MonoBehaviour {
 		objectContainer.transform.parent = transform;
 		for (int y=0; y<objects.GetUpperBound(1); y++) 
 		{
+			progressBar.value+=0.5f/(float)tiles.GetUpperBound(1);
+			yield return new WaitForEndOfFrame ();
 			for (int x=0; x<objects.GetUpperBound(0); x++) 
 			{
 				if (objects[x,y] >= 0)
@@ -264,6 +284,10 @@ public class WorldMap : MonoBehaviour {
 				}
 			}
 		}
+
+		progressText.text = "Creating fog of war ...";
+		progressBar.value = 0;
+		StartCoroutine ("createFogOfWar");
 	}
 
 	public bool isNeighbour (Vector2 tile1Nr, Vector2 tile2Nr)

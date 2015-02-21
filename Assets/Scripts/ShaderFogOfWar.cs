@@ -25,18 +25,21 @@ public class ShaderFogOfWar : MonoBehaviour
 
 	void Start () 
 	{
-		mesh = GetComponent<MeshFilter> ().mesh;
+
 	}
 
 	void Update () 
 	{
-		moveTexture ();
-
-		testStuff ();
+		if (mesh != null)
+		{
+			moveTexture ();
+			testStuff ();
+		}
 	}
 
 	public void createFogMesh (Vector2[,] positions)
 	{
+		mesh = GetComponent<MeshFilter> ().mesh;
 		mapWidth = positions.GetUpperBound (0)+1;
 		mapHeight = positions.GetUpperBound (1)+1;
 

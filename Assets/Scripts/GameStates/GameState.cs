@@ -44,6 +44,7 @@ public class GameState : MonoBehaviour
 	public GameObject winUI;
 	public GameObject inventoryUI;
 	public GameObject outpostUI;
+	public GameObject loadingUI;
 
 	public Player player;
 
@@ -198,6 +199,11 @@ public class GameState : MonoBehaviour
 		switchState ();
 	}
 
+	public void OnFinishedGenerating ()
+	{
+		mapState.init ();
+	}
+
 	void spawnParticles (int amount)
 	{
 		GameObject particle = (GameObject) Instantiate (particlePrefab);
@@ -261,6 +267,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (fighting)
 		{
+			loadingUI.SetActive (false);
 			playLoop (battleLoop);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
@@ -275,6 +282,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (dungeoneering)
 		{
+			loadingUI.SetActive (false);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
 			inventoryUI.SetActive (false);
@@ -288,6 +296,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (outposting)
 		{
+			loadingUI.SetActive (false);
 			outpostState.gameObject.SetActive(true);
 			outpostUI.SetActive(true);
 			inventoryUI.SetActive (true);
@@ -301,6 +310,7 @@ public class GameState : MonoBehaviour
 		}
 		else if (looting)
 		{
+			loadingUI.SetActive (false);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
 			inventoryUI.SetActive (true);
@@ -315,6 +325,7 @@ public class GameState : MonoBehaviour
 		else
 		{
 			playLoop (mapLoop);
+			loadingUI.SetActive (false);
 			outpostState.gameObject.SetActive(false);
 			outpostUI.SetActive(false);
 			inventoryUI.SetActive (true);

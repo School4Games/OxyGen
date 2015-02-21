@@ -14,7 +14,7 @@ public class MapState : MonoBehaviour
 
 	bool moved = false;
 
-	void Start ()
+	public void init ()
 	{
 		Vector2 basePosition = Vector2.zero;
 		for (int y=0; y<map.objects.GetUpperBound(1); y++)
@@ -35,6 +35,10 @@ public class MapState : MonoBehaviour
 
 	void Update ()
 	{
+		if (!map.generated)
+		{
+			return;
+		}
 		if (Input.GetButtonDown("Jump") && map.objects[(int)player.position.x,(int)player.position.y] >= 0)
 		{
 			gamestate.chooseEvent (map.tiles[(int)player.position.x,(int)player.position.y], map.objects[(int)player.position.x,(int)player.position.y]);
