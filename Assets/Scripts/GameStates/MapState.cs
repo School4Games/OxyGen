@@ -12,6 +12,7 @@ public class MapState : MonoBehaviour
 
 	public Player player;
 
+	// for tutorial message
 	bool moved = false;
 
 	public void init ()
@@ -61,7 +62,6 @@ public class MapState : MonoBehaviour
 
 			if (map.isNeighbour(player.position, tileNr)) 
 			{
-				fogOfWar.highlightTile ((int)tileNr.x, (int)tileNr.y);
 				if (Input.GetButtonDown ("Fire1"))
 				{
 					if (!moved)
@@ -70,10 +70,11 @@ public class MapState : MonoBehaviour
 						moved = true;
 					}
 					player.goToTile (tileNr, map);
-					updateFogOfWar ();
 					gamestate.chooseEvent (map.tiles[(int)tileNr.x,(int)tileNr.y], map.objects[(int)tileNr.x,(int)tileNr.y]);
 					player.consumeResources ();
+					updateFogOfWar ();
 				}
+				fogOfWar.highlightTile ((int)tileNr.x, (int)tileNr.y);
 			}
 			else 
 			{

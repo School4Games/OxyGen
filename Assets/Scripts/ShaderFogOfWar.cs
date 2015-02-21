@@ -43,177 +43,75 @@ public class ShaderFogOfWar : MonoBehaviour
 		mapWidth = positions.GetUpperBound (0)+1;
 		mapHeight = positions.GetUpperBound (1)+1;
 
-		Vector3[] vertices = new Vector3[mapWidth*mapHeight+4];
+		Vector3[] vertices = new Vector3[mapWidth*mapHeight+400];
 		int [] triangles = new int[vertices.Length*18+24];
 		Vector2[] uv = new Vector2[vertices.Length];
+		int index = 0;
+		int triIndex = 0;
 		for (int y=0; y<mapHeight; y++)
 		{
 			for (int x=0; x<mapWidth; x++)
 			{
 				Vector3 position = new Vector3 (positions[x,y].x, positions[x,y].y, 0);
-				int index = x + y*mapWidth;
+				// could do the same here as with triIndex
 				vertices[index] = position;
 				uv[index] = new Vector2 ((float)x/(float)mapWidth, (float)y/(float)mapHeight);
 
-				if (x>0 && y<mapHeight-1 && y>0 && x<mapWidth-1)
+				if (x>0 && y<mapHeight-1)
 				{
-					// safety
-					if (index+1+mapWidth < vertices.Length)
+					// tri 1
+					triangles[triIndex] = index;
+					triIndex ++;
+					// up
+					triangles[triIndex] = index+mapWidth;
+					triIndex ++;
+					// even, upper left
+					if (x % 2 == 0)
 					{
-						// complete hexagon
-						// creates unnecessary tris
-
-						// tri 1
-						triangles[index*18] = index;
-						// up
-						triangles[index*18+1] = index+mapWidth;
-						// even, upper left
-						if (x % 2 == 0)
-						{
-							triangles[index*18+2] = index-1;
-						}
-						// odd, upper left
-						else
-						{
-							triangles[index*18+2] = index-1+mapWidth;
-						}
-
-						// tri 2
-						triangles[index*18+3] = index;
-						// even, upper left
-						if (x % 2 == 0)
-						{
-							triangles[index*18+4] = index-1;
-						}
-						// odd, upper left
-						else
-						{
-							triangles[index*18+4] = index-1+mapWidth;
-						}
-						// even, lower left
-						if (x % 2 == 0)
-						{
-							triangles[index*18+5] = index-1-mapWidth;
-						}
-						// odd, lower left
-						else
-						{
-							triangles[index*18+5] = index-1;
-						}
-
-						// tri 3
-						triangles[index*18+6] = index;
-						// even, lower left
-						if (x % 2 == 0)
-						{
-							triangles[index*18+7] = index-1-mapWidth;
-						}
-						// odd, lower left
-						else
-						{
-							triangles[index*18+7] = index-1;
-						}
-						// down
-						triangles[index*18+8] = index-mapWidth;
-
-						// tri 4
-						triangles[index*18+9] = index;
-						// down
-						triangles[index*18+10] = index-mapWidth;
-						// even, lower right
-						if (x % 2 == 0)
-						{
-							triangles[index*18+11] = index+1-mapWidth;
-						}
-						// odd, lower right
-						else
-						{
-							triangles[index*18+11] = index+1;
-						}
-
-						// tri 5
-						triangles[index*18+12] = index;
-						// even, lower right
-						if (x % 2 == 0)
-						{
-							triangles[index*18+13] = index+1-mapWidth;
-						}
-						// odd, lower right
-						else
-						{
-							triangles[index*18+13] = index+1;
-						}
-						// even, upper right
-						if (x % 2 == 0)
-						{
-							triangles[index*18+14] = index+1;
-						}
-						// odd, upper right
-						else
-						{
-							triangles[index*18+14] = index+1+mapWidth;
-						}
-
-						// tri 6
-						triangles[index*18+15] = index;
-						// even, upper right
-						if (x % 2 == 0)
-						{
-							triangles[index*18+16] = index+1;
-						}
-						// odd, upper right
-						else
-						{
-							triangles[index*18+16] = index+1+mapWidth;
-						}
-						// up
-						triangles[index*18+17] = index+mapWidth;
+						triangles[triIndex] = index-1;
+						triIndex++;
+					}
+					// odd, upper left
+					else
+					{
+						triangles[triIndex] = index-1+mapWidth;
+						triIndex++;
 					}
 				}
+
+				if (x>0 && (y>0 || x % 2 != 0) && (y<mapHeight-1 || x % 2 == 0))
+				{
+					// tri 2
+					triangles[triIndex] = index;
+					triIndex++;
+					// even, upper left
+					if (x % 2 == 0)
+					{
+						triangles[triIndex] = index-1;
+						triIndex++;
+					}
+					// odd, upper left
+					else
+					{
+						triangles[triIndex] = index-1+mapWidth;
+						triIndex++;
+					}
+					// even, lower left
+					if (x % 2 == 0)
+					{
+						triangles[triIndex] = index-1-mapWidth;
+						triIndex++;
+					}
+					// odd, lower left
+					else
+					{
+						triangles[triIndex] = index-1;
+						triIndex++;
+					}
+				}
+				index++;
 			}
 		}
-
-		// create border
-		vertices [vertices.Length - 4] = new Vector3 (-5, -5, 0);
-		vertices [vertices.Length - 3] = new Vector3 (5, -5, 0);
-		vertices [vertices.Length - 2] = new Vector3 (5, 5, 0);
-		vertices [vertices.Length - 1] = new Vector3 (-5, 5, 0);
-
-		// bottom
-		triangles [triangles.Length-24] = vertices.Length - 4;
-		triangles [triangles.Length-23] = vertices.Length - 3;
-		triangles [triangles.Length-22] = 1;
-		
-		triangles [triangles.Length-21] = vertices.Length - 3;
-		triangles [triangles.Length-20] = 2*mapWidth-1;
-		triangles [triangles.Length-19] = 1;
-
-		// right
-		triangles [triangles.Length-18] = vertices.Length - 3;
-		triangles [triangles.Length-17] = vertices.Length - 2;
-		triangles [triangles.Length-16] = 2*mapWidth-1;
-		
-		triangles [triangles.Length-15] = vertices.Length - 2;
-		triangles [triangles.Length-14] = vertices.Length - 5;
-		triangles [triangles.Length-13] = 2*mapWidth-1;
-
-		// top
-		triangles[triangles.Length-12] = vertices.Length - 2;
-		triangles[triangles.Length-11] = vertices.Length - 4 - mapWidth;
-		triangles[triangles.Length-10] = vertices.Length - 5;
-
-		triangles[triangles.Length-9] = vertices.Length - 2;
-		triangles[triangles.Length-8] = vertices.Length - 1;
-		triangles[triangles.Length-7] = vertices.Length - 4 - mapWidth;
-
-		// left
-		triangles[triangles.Length-6] = vertices.Length - 1;
-		triangles[triangles.Length-5] = 1;
-		triangles[triangles.Length-4] = vertices.Length - 4 - mapWidth;
-
-		triangles[triangles.Length-3] = vertices.Length - 1;
-		triangles[triangles.Length-2] = vertices.Length - 4;
-		triangles[triangles.Length-1] = 1;
 
 		// test
 		Color[] colors = new Color[vertices.Length];
@@ -228,6 +126,216 @@ public class ShaderFogOfWar : MonoBehaviour
 				colors[i].b = colors[i].r;
 			}
 		}
+
+		// create border
+		// bottom
+		float s = Vector3.Distance (vertices[0], vertices[1]);
+		float h = Mathf.Pow (3.0f,0.5f)/2*s;
+		for (int x=0; x<mapWidth; x++)
+		{
+			int v0 = x;
+			int v1 = 0;
+			int v2 = 0;
+			int v3 = 0;
+			Vector3 position = new Vector3 (positions[x,0].x, positions[x,0].y, 0);
+			// create/ select vertex to the lower left
+			if (x % 2 == 0)
+			{
+				vertices[index] = position + new Vector3 (-h,-s/2,0);
+				v1 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else 
+			{
+				v1 = x-1;
+			}
+			// create vertex below
+			vertices[index] = position + new Vector3 (0,-s,0);
+			v2 = index;
+			colors[index] = Color.black;
+			index ++;
+			// create/ select vertex to the lower right 
+			if (x % 2 == 0 || x>=mapWidth-1)
+			{
+				vertices[index] = position + new Vector3 (h,-s/2,0);
+				v3 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else
+			{
+				v3 = x+1;
+			}
+			
+			// connect
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v1;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			triangles[triIndex] = v3;
+			triIndex++;
+		}
+
+		// left
+		for (int y=0; y<mapHeight; y++)
+		{
+			int v0 = y*mapWidth;
+			int v1 = 0;
+			int v2 = 0;
+			int v3 = 0;
+			Vector3 position = new Vector3 (positions[0,y].x, positions[0,y].y, 0);
+			// create/ select vertex above
+			if (y>=mapHeight-1)
+			{
+				vertices[index] = position + new Vector3 (0,s,0);
+				v1 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else 
+			{
+				v1 = (y+1)*mapWidth;
+			}
+			// create vertex to the upper left
+			vertices[index] = position + new Vector3 (-h,s/2,0);
+			v2 = index;
+			colors[index] = Color.black;
+			index ++;
+			// create vertex to the lower left
+			vertices[index] = position + new Vector3 (-h,-s/2,0);
+			v3 = index;
+			colors[index] = Color.black;
+			index ++;
+			
+			// connect
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v1;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			triangles[triIndex] = v3;
+			triIndex++;
+		}
+
+		// top
+		for (int x=0; x<mapWidth; x++)
+		{
+			int v0 = x+(mapHeight-1)*mapWidth;
+			Debug.Log (v0);
+			int v1 = 0;
+			int v2 = 0;
+			int v3 = 0;
+			Vector3 position = new Vector3 (positions[x,mapHeight-1].x, positions[x,mapHeight-1].y, 0);
+			// create/ select vertex to the upper right 
+			if (x % 2 != 0 || x>=mapWidth-1)
+			{
+				vertices[index] = position + new Vector3 (h,s/2,0);
+				v1 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else
+			{
+				v1 = v0+1;
+			}
+			// create vertex above
+			vertices[index] = position + new Vector3 (0,s,0);
+			v2 = index;
+			colors[index] = Color.black;
+			index ++;
+			// create/ select vertex to the upper left
+			if (x % 2 != 0)
+			{
+				vertices[index] = position + new Vector3 (-h,s/2,0);
+				v3 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else 
+			{
+				v3 = v0-1;
+			}
+			
+			// connect
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v1;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			
+			if (x>0)
+			{
+				triangles[triIndex] = v0;
+				triIndex++;
+				triangles[triIndex] = v2;
+				triIndex++;
+				triangles[triIndex] = v3;
+				triIndex++;
+			}
+		}
+
+		// right
+		for (int y=0; y<mapHeight; y++)
+		{
+			int v0 = y*mapWidth+(mapWidth-1);
+			int v1 = 0;
+			int v2 = 0;
+			int v3 = 0;
+			Vector3 position = new Vector3 (positions[mapWidth-1,y].x, positions[mapWidth-1,y].y, 0);
+			// create vertex to the lower right
+			vertices[index] = position + new Vector3 (h,-s/2,0);
+			v1 = index;
+			colors[index] = Color.black;
+			index ++;
+			// create vertex to the upper right
+			vertices[index] = position + new Vector3 (h,s/2,0);
+			v2 = index;
+			colors[index] = Color.black;
+			index ++;
+			// create/ select vertex above
+			if (y>=mapHeight-1)
+			{
+				vertices[index] = position + new Vector3 (0,s,0);
+				v3 = index;
+				colors[index] = Color.black;
+				index ++;
+			}
+			else 
+			{
+				v3 = (y+1)*mapWidth+(mapWidth-1);
+			}
+			
+			// connect
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v1;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			
+			triangles[triIndex] = v0;
+			triIndex++;
+			triangles[triIndex] = v2;
+			triIndex++;
+			triangles[triIndex] = v3;
+			triIndex++;
+		}
+		
 		/*colors [vertices.Length - 4 - mapWidth] = Color.red;
 		colors [vertices.Length - 1] = Color.green;
 		colors [vertices.Length - 2] = Color.blue;*/
@@ -246,6 +354,11 @@ public class ShaderFogOfWar : MonoBehaviour
 	public void clearFogTile (int x, int y)
 	{
 		Color[] colors = mesh.colors;
+
+		if (x<0 || y<0 || x>mapWidth-1 || y>mapHeight-1)
+		{
+			return;
+		}
 
 		colors[x+y*mapWidth] = clearColor;
 
