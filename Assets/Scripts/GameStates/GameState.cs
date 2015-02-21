@@ -234,7 +234,7 @@ public class GameState : MonoBehaviour
 			dungeonState.gameObject.SetActive (false);
 		}
 		// deaths(/ taking damage)
-		else if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && (worldMap.objects[(int)player.position.x, (int)player.position.x] < 0 || worldMap.objects[(int)player.position.x, (int)player.position.x] > 1))
+		if (player.inventory.getResources()[(int)Resource.Type.Oxygen].amount <= 0 && (worldMap.objects[(int)player.position.x, (int)player.position.x] < 0 || worldMap.objects[(int)player.position.x, (int)player.position.x] > 1))
 		{
 			// make player get hit sound instead?
 			playSound (enemyWinSound);
@@ -242,7 +242,7 @@ public class GameState : MonoBehaviour
 			overlayAnimator.Play ("fightHit");
 			if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0) loseText.text = loseText.text.Replace ("died", "suffocated");
 		}
-		else if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
+		if (player.inventory.getResources()[(int)Resource.Type.Water].amount <= 0)
 		{
 			playSound (enemyWinSound);
 			player.inventory.addResource (Resource.Type.Health, -1);

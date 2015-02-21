@@ -61,6 +61,11 @@ public class Inventory : MonoBehaviour
 	{
 		// add
 		resources[(int)type].amount += amount;
+
+		if (resources[(int)type].amount < 0)
+		{
+			resources[(int)type].amount = 0;
+		}
 		
 		int occupiedSlots = 0;
 		foreach (Resource resource in resources)

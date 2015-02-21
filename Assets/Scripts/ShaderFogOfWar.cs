@@ -235,7 +235,6 @@ public class ShaderFogOfWar : MonoBehaviour
 		for (int x=0; x<mapWidth; x++)
 		{
 			int v0 = x+(mapHeight-1)*mapWidth;
-			Debug.Log (v0);
 			int v1 = 0;
 			int v2 = 0;
 			int v3 = 0;

@@ -217,7 +217,8 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 		int stopHeight = Random.Range(0, eventCount[dmg]-1);
 		int cyclesLeft = cycles-1;
 		// ding, ding, ding, ding, ding
-		while (true) {
+		while (true) 
+		{
 			if (dmgX == dmg && dmgY == stopHeight && cyclesLeft <= 0) 
 			{
 				break;
@@ -251,7 +252,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			updatePointerPosition ();
 			pointer.enabled = true;
 		}
-		shieldSlider.interactable = true;
 		yield return new WaitForSeconds (1.0f);
 		// confiscate stakes
 		player.inventory.addResource(Resource.Type.Water, -(pot + Mathf.Max (0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount)));
@@ -295,5 +295,6 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			gamestate.fighting = false;
 			gamestate.switchState ();
 		}
+		shieldSlider.interactable = true;
 	}
 }
