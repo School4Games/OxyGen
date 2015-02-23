@@ -108,10 +108,10 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			statsDisplay.text = "";
 			statsDisplay.text += "Health: " + player.inventory.getResources()[(int)Resource.Type.Health].amount + "\n";
 			statsDisplay.text += "Shields: " + shield + "\n";
-			string winLoot = "<color=#00FF00>" + ((enemies[0] as Enemy).loot - Mathf.Max(0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount) + pot*2) + "</color>";
-			string looseLoot = "<color=#FF0000>" + (- Mathf.Max(0, shield-player.inventory.getResources()[(int)Resource.Type.Armor].amount)) + "</color>";
 			// water
-			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + " (" + winLoot + "/" + looseLoot + ")" + "\n";
+			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + "\n";
+			statsDisplay.text += "Loot: " + (enemies[0] as Enemy).loot + " Scrap";
+
 		}
 	}
 
@@ -269,7 +269,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			enemyAnimator.SetBool("dead", true);
 			yield return new WaitForSeconds (gamestate.enemyDieSound.length);
 			gamestate.playSound (gamestate.areaClearSound);
-			player.inventory.addResource(Resource.Type.Water, pot*2 + (enemies[0] as Enemy).loot);
+			player.inventory.addResource(Resource.Type.Scrap, pot*2 + (enemies[0] as Enemy).loot);
 		}
 		// reset shield and pot (and rolling)
 		shieldSlider.value = 0;
