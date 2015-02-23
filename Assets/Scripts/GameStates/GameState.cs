@@ -252,7 +252,7 @@ public class GameState : MonoBehaviour
 		// actually die here
 		if (player.inventory.getResources()[(int)Resource.Type.Health].amount <= 0)
 		{
-			overlayAnimator.Play ("fightHit");
+			overlayAnimator.SetBool ("dead", true);
 			playSound (dieSound);
 			loopAudioSource.Stop ();
 			loseUI.SetActive(true);
