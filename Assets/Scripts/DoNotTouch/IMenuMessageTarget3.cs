@@ -8,4 +8,6 @@ public interface IMenuMessageTarget : IEventSystemHandler
 {
 	// functions that can be called via the messaging system
 	void OnStart();
+	void OnApply();
+	void OnOptions();
 }

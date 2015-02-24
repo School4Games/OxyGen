@@ -45,6 +45,7 @@ public class GameState : MonoBehaviour
 	public GameObject inventoryUI;
 	public GameObject outpostUI;
 	public GameObject loadingUI;
+	public GameObject tutorialUI;
 
 	public Player player;
 
@@ -59,7 +60,10 @@ public class GameState : MonoBehaviour
 	void Start () 
 	{
 		loopAudioSource = Camera.main.GetComponents<AudioSource> ()[0];
+		loopAudioSource.volume = PlayerPrefs.GetFloat ("musicVolume", 1);
 		effectAudioSource = Camera.main.GetComponents<AudioSource> ()[1];
+		effectAudioSource.volume = PlayerPrefs.GetFloat ("soundVolume", 1);
+		tutorialUI.SetActive (System.Convert.ToBoolean (PlayerPrefs.GetInt ("showTutorial", 1)));
 		tutorialState.enableMessage (0);
 	}
 
