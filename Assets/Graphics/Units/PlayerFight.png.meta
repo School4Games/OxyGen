@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: 96aa7dd31bd00ba4ca2e0a3890c2c641
+guid: ff91ded9ddc0f214984b26537b058e4f
 TextureImporter:
   fileIDToRecycleName:
-    21300000: EnemyDesert1_0
+    21300000: PlayerFight_0
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -37,22 +37,22 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: .5, y: .5}
-  spriteBorder: {x: 0, y: 124, z: 0, w: 23}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: EnemyDesert1_0
+    - name: PlayerFight_0
       rect:
         serializedVersion: 2
-        x: 13
-        y: 128
-        width: 914
-        height: 787
+        x: 99
+        y: 0
+        width: 861
+        height: 805
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
