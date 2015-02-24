@@ -46,8 +46,15 @@ public class MenuState : MonoBehaviour, IMenuMessageTarget
 
 	public void OnOptions ()
 	{
+		loadPrefs ();
 		mainMenu.SetActive (false);
 		optionsMenu.SetActive (true);
+	}
+
+	public void OnMainMenu ()
+	{
+		mainMenu.SetActive (true);
+		optionsMenu.SetActive (false);
 	}
 
 	#endregion

@@ -10,4 +10,5 @@ public interface IMenuMessageTarget : IEventSystemHandler
 	void OnStart();
 	void OnApply();
 	void OnOptions();
+	void OnMainMenu();
 }
