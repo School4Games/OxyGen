@@ -109,7 +109,7 @@ public class FightState : MonoBehaviour, IFightMenuMessageTarget
 			statsDisplay.text += "Health: " + player.inventory.getResources()[(int)Resource.Type.Health].amount + "\n";
 			statsDisplay.text += "Shields: " + shield + "\n";
 			// water
-			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + "\n";
+			statsDisplay.text += "Water: " + player.inventory.getResources()[(int)Resource.Type.Water].amount + " (-" + shield + ")" + "\n";
 			statsDisplay.text += "Loot: " + (enemies[0] as Enemy).loot + " Scrap";
 
 		}

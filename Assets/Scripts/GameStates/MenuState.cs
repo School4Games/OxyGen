@@ -14,6 +14,11 @@ public class MenuState : MonoBehaviour, IMenuMessageTarget
 	public GameObject mainMenu;
 	public GameObject optionsMenu;
 
+	void Start ()
+	{
+		loadPrefs ();
+	}
+
 	void loadPrefs ()
 	{
 		soundVolume.value = PlayerPrefs.GetFloat ("soundVolume", 1);
