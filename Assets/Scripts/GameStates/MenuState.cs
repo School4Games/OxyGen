@@ -7,6 +7,7 @@ public class MenuState : MonoBehaviour, IMenuMessageTarget
 	public Slider soundVolume;
 	public Slider musicVolume;
 	public Toggle showTutorial;
+	public AudioSource audioSource;
 
 	public Text text;
 
@@ -18,6 +19,7 @@ public class MenuState : MonoBehaviour, IMenuMessageTarget
 		soundVolume.value = PlayerPrefs.GetFloat ("soundVolume", 1);
 		musicVolume.value = PlayerPrefs.GetFloat ("musicVolume", 1);
 		showTutorial.isOn = System.Convert.ToBoolean (PlayerPrefs.GetInt ("showTutorial", 1));
+		audioSource.volume = musicVolume.value;
 	}
 
 	#region IMenuMessageTarget implementation
@@ -32,6 +34,7 @@ public class MenuState : MonoBehaviour, IMenuMessageTarget
 		PlayerPrefs.SetFloat ("soundVolume", soundVolume.value);
 		PlayerPrefs.SetFloat ("musicVolume", musicVolume.value);
 		PlayerPrefs.SetInt ("showTutorial", System.Convert.ToInt16 (showTutorial.isOn));
+		audioSource.volume = musicVolume.value;
 		mainMenu.SetActive (true);
 		optionsMenu.SetActive (false);
 	}
